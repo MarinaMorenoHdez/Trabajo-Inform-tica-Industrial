@@ -31,7 +31,3 @@ vector<Vector2D> Peon::movimientosPosibles(Pieza* tablero[10][8]) {
     return movs;
 }
 
-void Peon::mueve(Vector2D p)
-{
-	posicion = p;
-}
