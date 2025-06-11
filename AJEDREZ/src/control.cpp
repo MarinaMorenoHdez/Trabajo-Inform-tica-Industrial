@@ -1,8 +1,29 @@
 #include "control.h"
 
 void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo, bool TeclaSp, bool TeclaCtr) {
-	if (estado == 0)
+	if (!abajo) return;  // Solo al hacer clic
+
+	int anchoVentana = glutGet(GLUT_WINDOW_WIDTH);
+	int altoVentana = glutGet(GLUT_WINDOW_HEIGHT);
+
+	// Conversión de coordenadas pantalla  mundo
+	float x_mundo = -15.0f + (x / (float)anchoVentana) * 60.0f;
+	float y_mundo = 40.0f - (y / (float)altoVentana) * 44.0f;
+
+	std::cout << "Click mundo: x=" << x_mundo << ", y=" << y_mundo << std::endl;
+
+	switch (estado) {
+	case INICIO:
+		if (x_mundo >= 10 && x_mundo <= 30 && y_mundo >= 3 && y_mundo <= 10) {
+			estado = START;
+			std::cout << "Cambio a estado START\n";
+		}
+		break;
+
+	case JUEGO:
 		mundo.MouseButton(tipo_oponente, x, y, boton, abajo, TeclaSp, TeclaCtr);
+		break;
+	}
 }
 
 void control::dibuja() {
@@ -130,11 +151,9 @@ void control::dibuja() {
 void control::tecla(unsigned char key) {
 	switch (estado) {
 	case INICIO:
-		if (key == 's' || key == 'S') {
-			estado = START;
-			
-		}
+		// Transición a START se hace con clic en pantalla, no con teclado
 		break;
+
 
 	case START:
 		if (key == 'v' || key == 'V') {
