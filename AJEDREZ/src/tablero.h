@@ -22,6 +22,8 @@ public:
 	Tablero(); // Constructor
 	~Tablero(); // Destructor
 
+	bool moverPieza(Vector2D origen, Vector2D destino);
+
 	void inicializar();
 
 };
