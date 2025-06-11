@@ -17,14 +17,15 @@ class Tablero
 private:
 	Pieza* tablero[10][8];
 	std::vector<Pieza*> piezas; // lista de piezas del juego
-	void cambiarTurno();
+	char turno; // 'B' = blancas, 'N' = negras
+	
 
 public:
 	Tablero(); // Constructor
 	~Tablero(); // Destructor
 
 	bool moverPieza(Vector2D origen, Vector2D destino);
-
+	void cambiarTurno();
 	void inicializar();
 	std::vector<Vector2D> getMovimientos(Pieza* pieza) const;
 };
