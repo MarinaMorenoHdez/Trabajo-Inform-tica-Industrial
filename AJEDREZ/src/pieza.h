@@ -4,8 +4,8 @@
 class Pieza
 {
 private:
-    int tipo;            // Tipo de pieza (positivo= blancas, negativo = negras)
-    Vector2D posicion;   // Posición en el tablero
+    char tipo;            // Pieza B o N
+    Vector2D posicion;   // PosiciÃ³n en el tablero
 
 public:
     Pieza(int x, int y, int tipo); 
