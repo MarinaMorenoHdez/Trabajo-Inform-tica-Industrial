@@ -27,6 +27,5 @@ public:
 	bool moverPieza(Vector2D origen, Vector2D destino);
 	void cambiarTurno();
 	void inicializar();
-	std::vector<Vector2D> getMovimientos(Pieza* pieza) const;
 };
 
