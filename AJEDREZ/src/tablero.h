@@ -15,7 +15,7 @@
 class Tablero
 {
 private:
-	int* tablero[10][8];
+	Pieza* tablero[10][8];
 	std::vector<Pieza*> piezas; // lista de piezas del juego
 
 public:
