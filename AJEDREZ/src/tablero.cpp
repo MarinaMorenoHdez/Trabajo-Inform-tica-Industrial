@@ -9,6 +9,20 @@ Tablero::Tablero() {
 	}
 }
 
+bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
+	Pieza* pieza = tablero[origen.x][origen.y];
+	if (!pieza) return false;
+
+	// Aquí deberías validar si el movimiento es legal según la pieza
+	// y si el destino está libre o tiene una pieza del otro equipo
+	
+	// Actualiza el tablero
+	tablero[destino.x][destino.y] = pieza;
+	tablero[origen.x][origen.y] = nullptr;
+	pieza->mueve(Vector2D(destino.x, destino.y));
+	return true;
+}
+
 Tablero::~Tablero() {
 	for (auto pieza : piezas) {
 		delete pieza;
