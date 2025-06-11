@@ -2,6 +2,7 @@
 #include "ETSIDI.h"
 #include "iostream"
 #include "control.h"
+#include "mundo.h"
 
 //Tablero tablero;
 control juego;
