@@ -7,6 +7,7 @@ Tablero::Tablero() {
 			tablero[i][j] = nullptr;
 		}
 	}
+	turno = 'B';
 }
 
 bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
@@ -28,6 +29,10 @@ Tablero::~Tablero() {
 		delete pieza;
 	}
 	piezas.clear();
+}
+
+void Tablero::cambiarTurno() {
+	turno = (turno == 'B') ? 'N' : 'B';
 }
 
 void Tablero::inicializar(){
