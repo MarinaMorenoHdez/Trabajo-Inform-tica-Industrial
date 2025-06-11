@@ -17,6 +17,7 @@ class Tablero
 private:
 	Pieza* tablero[10][8];
 	std::vector<Pieza*> piezas; // lista de piezas del juego
+	void cambiarTurno();
 
 public:
 	Tablero(); // Constructor
