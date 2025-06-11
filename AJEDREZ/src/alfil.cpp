@@ -5,25 +5,19 @@ vector<Vector2D> Alfil::movimientosPosibles(Pieza* tablero[10][8]) {
     int x = posicion.x;
     int y = posicion.y;
 
-    // Direcciones diagonales: {dx, dy}
     int dx[] = { 1, 1, -1, -1 };
     int dy[] = { 1, -1, 1, -1 };
 
-    for (int d = 0; d < 4; ++d) {
-        int nx = x + dx[d];
-        int ny = y + dy[d];
-        while (nx >= 0 && nx < 10 && ny >= 0 && ny < 8) {
-            if (tablero[nx][ny] == nullptr) {
-                movs.push_back(Vector2D(nx, ny));
-            }
-            else {
-                movs.push_back(Vector2D(nx, ny)); // Puede capturar cualquier pieza
-                break; // No puede saltar piezas
-            }
-            nx += dx[d];
-            ny += dy[d];
+    // Movimientos de alfil 
+    for (int dir = 0; dir < 4; ++dir) {
+        int x = posicion.x + dx[dir];
+        int y = posicion.y + dy[dir];
+        while (x >= 0 && x < 10 && y >= 0 && y < 8) {
+            movs.push_back(Vector2D(x, y));
+            if (tablero[x][y] != nullptr) break; // Puede comerse a sí mismo, pero no saltar
+            x += dx[dir];
+            y += dy[dir];
         }
     }
-
     return movs;
 }
