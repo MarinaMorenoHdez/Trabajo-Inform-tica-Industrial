@@ -8,11 +8,12 @@ class Pieza
 protected:
 	friend class Tablero;
     char color;            // Tipo B o N
-    Vector2D posicion;   // Posición en el tablero
+    Vector2D posicion;   // PosiciÃ³n en el tablero
 	tipo t;              // Tipo de pieza (Arzobispo, Canciller, etc.)
 	
 public:
 	Pieza(int x, int y, int c, tipo t) : color(c), posicion(x, y), t(t) {} // Constructor
 	virtual ~Pieza() = 0;
 	virtual void mueve(Vector2D p) = 0;
+	char getColor() const;
 };
