@@ -1,5 +1,7 @@
 #pragma once
 #include "vector2D.h"
+#include <vector>
+using std::vector;
 
 enum class tipo { ARZOBISPO, CANCILLER, TORRE, CABALLO, REINA, REY, PEON, ALFIL };
 
