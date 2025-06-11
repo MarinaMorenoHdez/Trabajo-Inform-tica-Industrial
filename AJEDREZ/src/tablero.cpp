@@ -9,11 +9,14 @@ Tablero::Tablero() {
 		}
 	}
 	turno = 'B';
+	inicializar(); // Llamar a la función para inicializar las piezas
 }
 
 bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	Pieza* pieza = tablero[origen.x][origen.y];
 	if (!pieza) return false;
+	// Validar turno
+	if (pieza->getColor() != turno) return false;
 
 	// Aquí deberías validar si el movimiento es legal según la pieza
 	// y si el destino está libre o tiene una pieza del otro equipo
@@ -22,6 +25,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	tablero[destino.x][destino.y] = pieza;
 	tablero[origen.x][origen.y] = nullptr;
 	pieza->mueve(Vector2D(destino.x, destino.y));
+	cambiarTurno(); // Cambiar el turno después de mover la pieza
 	return true;
 }
 
