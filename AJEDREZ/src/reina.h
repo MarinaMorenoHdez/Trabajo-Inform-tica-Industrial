@@ -4,5 +4,4 @@ class Reina : public Pieza
 {
 public:
 	Reina(int x, int y, char c) : Pieza(x, y, c, tipo::REINA) {} // Constructor 
-	void mueve(Vector2D p)override {};
 };
