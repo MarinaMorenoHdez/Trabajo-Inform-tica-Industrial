@@ -15,20 +15,36 @@ Tablero::Tablero() {
 bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	Pieza* pieza = tablero[origen.x][origen.y];
 	if (!pieza) return false;
-	// Validar turno
-	if (pieza->getColor() != turno) return false;
 
 	// Aquí deberías validar si el movimiento es legal según la pieza
 	// y si el destino está libre o tiene una pieza del otro equipo
 	
+	// Limites tablero
+	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8)
+		return false;
+
+	// Peon
+	if (pieza->t == tipo::PEON) {
+		// convertir pieza a Peon para poder acceder al método
+		Peon* peon = dynamic_cast<Peon*>(pieza); 
+		vector <Vector2D> movs = peon->movimientosPosibles(tablero);
+		bool valido = false;
+
+		for (auto& ref : movs) {
+			if (ref.x == destino.x && ref.y == destino.y) {
+				valido = true;
+				break;
+			}
+		}
+		if (!valido) return false;
+	}
+
 	// Actualiza el tablero
 	tablero[destino.x][destino.y] = pieza;
 	tablero[origen.x][origen.y] = nullptr;
 	pieza->mueve(Vector2D(destino.x, destino.y));
-	cambiarTurno(); // Cambiar el turno después de mover la pieza
 	return true;
 }
-
 Tablero::~Tablero() {
 	for (auto pieza : piezas) {
 		delete pieza;
