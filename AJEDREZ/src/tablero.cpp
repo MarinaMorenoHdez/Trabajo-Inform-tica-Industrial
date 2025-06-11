@@ -1,4 +1,5 @@
 #include "tablero.h"
+using namespace std;
 
 Tablero::Tablero() {
 	// Inicializar el tablero con nullptr
@@ -185,6 +186,225 @@ void Tablero::inicializar(){
 	piezas.push_back(reinaNegra);
 	tablero[4][7] = reinaNegra;
 
+}
+
+vector<Vector2D> Tablero::getMovimientos(Pieza* pieza) const {
+    vector<Vector2D> movimientos;
+    if (!pieza) return movimientos;
+
+    int x = pieza->posicion.x;
+    int y = pieza->posicion.y;
+    char color = pieza->color;
+
+    switch (pieza->t) {
+    case tipo::PEON:
+        if (color == 'B') {
+            // Movimiento hacia adelante
+            if (y + 1 < 8 && tablero[x][y + 1] == nullptr)
+                movimientos.push_back(Vector2D(x, y + 1));
+            // Capturas diagonales
+            if (x > 0 && y + 1 < 8 && tablero[x - 1][y + 1] != nullptr && tablero[x - 1][y + 1]->color == 'N')
+                movimientos.push_back(Vector2D(x - 1, y + 1));
+            if (x < 9 && y + 1 < 8 && tablero[x + 1][y + 1] != nullptr && tablero[x + 1][y + 1]->color == 'N')
+                movimientos.push_back(Vector2D(x + 1, y + 1));
+        }
+        else {
+            // Movimiento hacia adelante
+            if (y - 1 >= 0 && tablero[x][y - 1] == nullptr)
+                movimientos.push_back(Vector2D(x, y - 1));
+            // Capturas diagonales
+            if (x > 0 && y - 1 >= 0 && tablero[x - 1][y - 1] != nullptr && tablero[x - 1][y - 1]->color == 'B')
+                movimientos.push_back(Vector2D(x - 1, y - 1));
+            if (x < 9 && y - 1 >= 0 && tablero[x + 1][y - 1] != nullptr && tablero[x + 1][y - 1]->color == 'B')
+                movimientos.push_back(Vector2D(x + 1, y - 1));
+        }
+        break;
+    case tipo::TORRE:
+        // Movimiento horizontal y vertical
+        for (int i = x + 1; i < 10; ++i) {
+            if (tablero[i][y] == nullptr)
+                movimientos.push_back(Vector2D(i, y));
+            else {
+                if (tablero[i][y]->color != color)
+                    movimientos.push_back(Vector2D(i, y));
+                break;
+            }
+        }
+        for (int i = x - 1; i >= 0; --i) {
+            if (tablero[i][y] == nullptr)
+                movimientos.push_back(Vector2D(i, y));
+            else {
+                if (tablero[i][y]->color != color)
+                    movimientos.push_back(Vector2D(i, y));
+                break;
+            }
+        }
+        for (int j = y + 1; j < 8; ++j) {
+            if (tablero[x][j] == nullptr)
+                movimientos.push_back(Vector2D(x, j));
+            else {
+                if (tablero[x][j]->color != color)
+                    movimientos.push_back(Vector2D(x, j));
+                break;
+            }
+        }
+        for (int j = y - 1; j >= 0; --j) {
+            if (tablero[x][j] == nullptr)
+                movimientos.push_back(Vector2D(x, j));
+            else {
+                if (tablero[x][j]->color != color)
+                    movimientos.push_back(Vector2D(x, j));
+                break;
+            }
+        }
+        break;
+    case tipo::CABALLO: {
+        int dx[] = { 1, 2, 2, 1, -1, -2, -2, -1 };
+        int dy[] = { 2, 1, -1, -2, -2, -1, 1, 2 };
+        for (int i = 0; i < 8; ++i) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (nx >= 0 && nx < 10 && ny >= 0 && ny < 8) {
+                if (tablero[nx][ny] == nullptr || tablero[nx][ny]->color != color)
+                    movimientos.push_back(Vector2D(nx, ny));
+            }
+        }
+        break;
+    }
+    case tipo::ALFIL:
+        // Diagonales
+        for (int dx = 1, dy = 1; x + dx < 10 && y + dy < 8; ++dx, ++dy) {
+            if (tablero[x + dx][y + dy] == nullptr)
+                movimientos.push_back(Vector2D(x + dx, y + dy));
+            else {
+                if (tablero[x + dx][y + dy]->color != color)
+                    movimientos.push_back(Vector2D(x + dx, y + dy));
+                break;
+            }
+        }
+        for (int dx = 1, dy = -1; x + dx < 10 && y + dy >= 0; ++dx, --dy) {
+            if (tablero[x + dx][y + dy] == nullptr)
+                movimientos.push_back(Vector2D(x + dx, y + dy));
+            else {
+                if (tablero[x + dx][y + dy]->color != color)
+                    movimientos.push_back(Vector2D(x + dx, y + dy));
+                break;
+            }
+        }
+        for (int dx = -1, dy = 1; x + dx >= 0 && y + dy < 8; --dx, ++dy) {
+            if (tablero[x + dx][y + dy] == nullptr)
+                movimientos.push_back(Vector2D(x + dx, y + dy));
+            else {
+                if (tablero[x + dx][y + dy]->color != color)
+                    movimientos.push_back(Vector2D(x + dx, y + dy));
+                break;
+            }
+        }
+        for (int dx = -1, dy = -1; x + dx >= 0 && y + dy >= 0; --dx, --dy) {
+            if (tablero[x + dx][y + dy] == nullptr)
+                movimientos.push_back(Vector2D(x + dx, y + dy));
+            else {
+                if (tablero[x + dx][y + dy]->color != color)
+                    movimientos.push_back(Vector2D(x + dx, y + dy));
+                break;
+            }
+        }
+        break;
+    case tipo::REINA:
+        // Reina = Torre + Alfil
+        // Torre
+        for (int i = x + 1; i < 10; ++i) {
+            if (tablero[i][y] == nullptr)
+                movimientos.push_back(Vector2D(i, y));
+            else {
+                if (tablero[i][y]->color != color)
+                    movimientos.push_back(Vector2D(i, y));
+                break;
+            }
+        }
+        for (int i = x - 1; i >= 0; --i) {
+            if (tablero[i][y] == nullptr)
+                movimientos.push_back(Vector2D(i, y));
+            else {
+                if (tablero[i][y]->color != color)
+                    movimientos.push_back(Vector2D(i, y));
+                break;
+            }
+        }
+        for (int j = y + 1; j < 8; ++j) {
+            if (tablero[x][j] == nullptr)
+                movimientos.push_back(Vector2D(x, j));
+            else {
+                if (tablero[x][j]->color != color)
+                    movimientos.push_back(Vector2D(x, j));
+                break;
+            }
+        }
+        for (int j = y - 1; j >= 0; --j) {
+            if (tablero[x][j] == nullptr)
+                movimientos.push_back(Vector2D(x, j));
+            else {
+                if (tablero[x][j]->color != color)
+                    movimientos.push_back(Vector2D(x, j));
+                break;
+            }
+        }
+        // Alfil
+        for (int dx = 1, dy = 1; x + dx < 10 && y + dy < 8; ++dx, ++dy) {
+            if (tablero[x + dx][y + dy] == nullptr)
+                movimientos.push_back(Vector2D(x + dx, y + dy));
+            else {
+                if (tablero[x + dx][y + dy]->color != color)
+                    movimientos.push_back(Vector2D(x + dx, y + dy));
+                break;
+            }
+        }
+        for (int dx = 1, dy = -1; x + dx < 10 && y + dy >= 0; ++dx, --dy) {
+            if (tablero[x + dx][y + dy] == nullptr)
+                movimientos.push_back(Vector2D(x + dx, y + dy));
+            else {
+                if (tablero[x + dx][y + dy]->color != color)
+                    movimientos.push_back(Vector2D(x + dx, y + dy));
+                break;
+            }
+        }
+        for (int dx = -1, dy = 1; x + dx >= 0 && y + dy < 8; --dx, ++dy) {
+            if (tablero[x + dx][y + dy] == nullptr)
+                movimientos.push_back(Vector2D(x + dx, y + dy));
+            else {
+                if (tablero[x + dx][y + dy]->color != color)
+                    movimientos.push_back(Vector2D(x + dx, y + dy));
+                break;
+            }
+        }
+        for (int dx = -1, dy = -1; x + dx >= 0 && y + dy >= 0; --dx, --dy) {
+            if (tablero[x + dx][y + dy] == nullptr)
+                movimientos.push_back(Vector2D(x + dx, y + dy));
+            else {
+                if (tablero[x + dx][y + dy]->color != color)
+                    movimientos.push_back(Vector2D(x + dx, y + dy));
+                break;
+            }
+        }
+        break;
+    case tipo::REY:
+        for (int dx = -1; dx <= 1; ++dx) {
+            for (int dy = -1; dy <= 1; ++dy) {
+                if (dx == 0 && dy == 0) continue;
+                int nx = x + dx;
+                int ny = y + dy;
+                if (nx >= 0 && nx < 10 && ny >= 0 && ny < 8) {
+                    if (tablero[nx][ny] == nullptr || tablero[nx][ny]->color != color)
+                        movimientos.push_back(Vector2D(nx, ny));
+                }
+            }
+        }
+        break;
+        // Falta ARZOBISPO y CANCILLER.
+    default:
+        break;
+    }
+    return movimientos;
 }
 
 
