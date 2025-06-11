@@ -9,6 +9,13 @@ Tablero::Tablero() {
 	}
 }
 
+Tablero::~Tablero() {
+	for (auto pieza : piezas) {
+		delete pieza;
+	}
+	piezas.clear();
+}
+
 void Tablero::inicializar(){
 	// Peones blancos
 	Pieza* peonBlanco1 = new Peon(0, 1, 'B');
