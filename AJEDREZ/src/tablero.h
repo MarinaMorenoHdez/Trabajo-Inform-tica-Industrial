@@ -20,6 +20,8 @@ private:
 
 public:
 	Tablero(); // Constructor
+	~Tablero(); // Destructor
+
 	void inicializar();
 
 };
