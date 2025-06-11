@@ -1,64 +1,46 @@
-#include <iostream>
-#include "tablero.h"
-#include "peon.h"
+#include "freeglut.h"
+#include "ETSIDI.h"
+#include "iostream"
 #include "control.h"
 
 //Tablero tablero;
 control juego;
-void OnDraw(void); 
-void OnTimer(int value); 
-void OnKeyboardDown(unsigned char key, int x, int y); 
-void OnMouseClick(int button, int state, int x, int y); 
 
-int main (int argc, char* argv[])
-    Tablero tab;
-    tab.inicializar();
-    tab.mostrar();
 
-    int x1, y1, x2, y2;
-    while (true) {
-        std::cout << "\nIntroduce las coordenadas de la pieza a mover (x y) o -1 para salir: ";
-        std::cin >> x1;
-        if (x1 == -1) break;
-        std::cin >> y1;
-        std::cout << "Introduce las coordenadas de destino (x y): ";
-        std::cin >> x2 >> y2;
+//NO HACE FALTA LLAMARLAS EXPLICITAMENTE
+void OnDraw(void); //esta funcion sera llamada para dibujar
+void OnTimer(int value); //esta funcion sera llamada cuando transcurra una temporizacion
+void OnKeyboardDown(unsigned char key, int x, int y); //cuando se pulse una tecla	
+void OnMouseClick(int button, int state, int x, int y); //Control del ratón
 
-        if (tab.moverPieza(Vector2D(x1, y1), Vector2D(x2, y2))) {
-            std::cout << "Movimiento realizado.\n";
-        }
-        else {
-            std::cout << "Movimiento no válido.\n";
-        }
-        tab.mostrar();
-    }
-       //Inicializar el gestor de ventanas GLUT
-    //y crear la ventana
-    glutInit(&argc, argv);
-    glutInitWindowSize(800, 600);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutCreateWindow("The BIT-else");
-    
-    //habilitar luces y definir perspectiva
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_COLOR_MATERIAL);
-    glMatrixMode(GL_PROJECTION);
-    gluPerspective(40.0, 800 / 600.0f, 0.1, 150);
-    
-    //Registrar los callbacks
-    glutDisplayFunc(OnDraw);
-    glutTimerFunc(25, OnTimer, 0);//le decimos que dentro de 25ms llame 1 vez a la funcion OnTimer()
-    glutKeyboardFunc(OnKeyboardDown);
-    glutMouseFunc(OnMouseClick); //Callback del raton
-    
-    //pasarle el control a GLUT,que llamara a los callbacks
-    glutMainLoop();
+int main(int argc, char* argv[])
+{
+	//Inicializar el gestor de ventanas GLUT
+	//y crear la ventana
+	glutInit(&argc, argv);
+	glutInitWindowSize(800, 600);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+	glutCreateWindow("The BIT-else");
 
-return 0;
+	//habilitar luces y definir perspectiva
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glMatrixMode(GL_PROJECTION);
+	gluPerspective(40.0, 800 / 600.0f, 0.1, 150);
+
+	//Registrar los callbacks
+	glutDisplayFunc(OnDraw);
+	glutTimerFunc(25, OnTimer, 0);//le decimos que dentro de 25ms llame 1 vez a la funcion OnTimer()
+	glutKeyboardFunc(OnKeyboardDown);
+	glutMouseFunc(OnMouseClick); //Callback del raton
+
+	//pasarle el control a GLUT,que llamara a los callbacks
+	glutMainLoop();
+
+	return 0;
 }
-
 
 void OnDraw(void)
 {
@@ -102,7 +84,7 @@ void OnMouseClick(int b, int state, int x, int y)
 	bool ctrlKey = (specialKey & GLUT_ACTIVE_CTRL) ? true : false;
 	bool sKey = specialKey & GLUT_ACTIVE_SHIFT;
 
-	//juego.MouseButton(juego.Get_mundo().get_oponente(), x, y, b, down, sKey, ctrlKey);
-
+	
+	juego.MouseButton(0, x, y, b, down, sKey, ctrlKey);
 	glutPostRedisplay();
 }
