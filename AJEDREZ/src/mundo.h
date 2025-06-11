@@ -8,8 +8,12 @@ enum { BOTON_RATON_IZQ, BOTON_RATON_DRCH };
 class Mundo
 {
 	Tablero tablero;
+private:
+	int tipo_oponente = 0;  // o el nombre que estés usando
 
 public:
+	int get_oponente() const { return tipo_oponente; }
+
 
 	void inicializa(int tipo_juego, const int& tipo_oponente);
 	void dibuja();
