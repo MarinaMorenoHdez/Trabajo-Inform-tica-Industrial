@@ -326,5 +326,78 @@ bool Tablero::Jaque(char color)
 	return false; // No hay jaque
 }
 
+void Tablero::Tomar_Pieza_1VS1(Vector2D origen) {
+	pInd = -1;
+
+	if (tablero[origen.x][origen.y] != nullptr) {
+		for (int z = 0; z < piezas.size(); z++) {
+			if (piezas[z]->getPosicion().x == origen.x && piezas[z]->getPosicion().y == origen.y) {
+				pInd = z;
+				break;
+			}
+		}
+		if (pInd != -1 && piezas[pInd]->getColor() != turno) {
+			pInd = -1;
+			ETSIDI::play("sonidos/SonidoError.wav");
+		}
+		else {
+			pI = origen.x;
+			pJ = origen.y;
+		}
+	}
+}
+
+void Tablero::Soltar_Pieza_1VS1(Vector2D destino) {
+	if (pInd == -1) return;
+
+	Pieza* seleccionada = piezas[pInd];
+	if (seleccionada && seleccionada->getColor() == turno) {
+		bool valido = false;
+		auto posibles = seleccionada->movimientosPosibles(tablero);
+		for (const auto& m : posibles) {
+			if (m.x == destino.x && m.y == destino.y) {
+				valido = true;
+				break;
+			}
+		}
+
+		if (valido) {
+			Pieza* destinoPieza = tablero[destino.x][destino.y];
+
+			if (destinoPieza != nullptr) {
+				for (int i = 0; i < piezas.size(); ++i) {
+					if (piezas[i] == destinoPieza) {
+						ETSIDI::play("sonidos/ComerFicha.wav");
+						delete piezas[i];
+						piezas.erase(piezas.begin() + i);
+						if (i < pInd) pInd--;
+						break;
+					}
+				}
+			}
+
+			tablero[destino.x][destino.y] = seleccionada;
+			tablero[pI][pJ] = nullptr;
+			seleccionada->mueve(destino);
+			cambiarTurno();
+
+			ETSIDI::play("sonidos/MoverFicha.wav");
+
+			char enemigo = (turno == 'B') ? 'N' : 'B';
+			if (Jaque(enemigo)) {
+				std::cout << "¡Jaque al Rey " << enemigo << "!\n";
+			}
+
+		}
+		else {
+			ETSIDI::play("sonidos/SonidoError.wav");
+		}
+	}
+
+	pInd = -1;
+}
+
+
+
 
 
