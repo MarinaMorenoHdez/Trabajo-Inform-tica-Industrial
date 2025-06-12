@@ -1,4 +1,7 @@
 #include "alfil.h"
+#include "freeglut.h"
+#include <ETSIDI.h>
+#include <string>
 
 vector<Vector2D> Alfil::movimientosPosibles(Pieza* tablero[10][8]) {
     vector<Vector2D> movs;
