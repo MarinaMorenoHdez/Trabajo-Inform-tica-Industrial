@@ -17,7 +17,8 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	Pieza* pieza = tablero[origen.x][origen.y];
 	// No hay pieza en la posición de origen
 	if (!pieza) return false; 
-	
+	//comprobar turno 
+	if (pieza->getColor() != turno) return false;
 	// Limites tablero
 	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8)
 		return false;
@@ -38,6 +39,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	tablero[destino.x][destino.y] = pieza;
 	tablero[origen.x][origen.y] = nullptr;
 	pieza->mueve(Vector2D(destino.x, destino.y));
+	cambiarTurno();
 	return true;
 }
 Tablero::~Tablero() {
