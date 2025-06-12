@@ -238,20 +238,58 @@ void Tablero::inicializar(){
 }
 void Tablero:: dibuja(){
 	
-	//dibujar fondo
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D,
-		ETSIDI::getTexture("imagenes/inicio.png").id);
+		// DIBUJAR FONDO
 	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/inicio.png").id);
+
 	glBegin(GL_POLYGON);
 	glColor3f(1, 1, 1);
-	glTexCoord2d(0, 1); glVertex2d(-15, -4); //inferior izquierda
-	glTexCoord2d(1, 1); glVertex2d(45, -4); //Inferior derecha
-	glTexCoord2d(1, 0); glVertex2d(45, 40); //Superior derecha
-	glTexCoord2d(0, 0); glVertex2d(-15, 40); //Superior izquierda
+	glTexCoord2d(0, 1); glVertex3d(-15, -4, -1); 
+	glTexCoord2d(1, 1); glVertex3d(45, -4, -1);
+	glTexCoord2d(1, 0); glVertex3d(45, 40, -1);
+	glTexCoord2d(0, 0); glVertex3d(-15, 40, -1);
 	glEnd();
-	glEnable(GL_LIGHTING);
+
 	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+
+	// DIBUJAR TABLERO CON CASILLAS
+	float casillaSize = 4.0f;
+	float offsetX = 0.0f;
+	float offsetY = 0.0f;
+
+	for (int fila = 0; fila < 8; ++fila) {
+		for (int col = 0; col < 10; ++col) {
+			if ((fila + col) % 2 == 0)
+				glColor3f(0.9f, 0.9f, 0.9f); // claro
+			else
+				glColor3f(0.2f, 0.2f, 0.2f); // oscuro
+
+			float x1 = offsetX + col * casillaSize;
+			float y1 = offsetY + fila * casillaSize;
+			float x2 = x1 + casillaSize;
+			float y2 = y1 + casillaSize;
+
+			glBegin(GL_QUADS);
+			glVertex3f(x1, y1, 0);  
+			glVertex3f(x2, y1, 0);
+			glVertex3f(x2, y2, 0);
+			glVertex3f(x1, y2, 0);
+			glEnd();
+		}
+	}
+
+	//dibujar pieza
+	for (int x = 0; x < 10; ++x) {
+		for (int y = 0; y < 8; ++y) {
+			Pieza* p = tablero[x][y];
+			if (p != nullptr) {
+				p->dibuja();  // Dibujar cada pieza
+			}
+		}
+
+	}
 	
 
 	
