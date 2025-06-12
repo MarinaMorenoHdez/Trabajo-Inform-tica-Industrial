@@ -28,6 +28,8 @@ public:
 	void cambiarTurno();
 	void inicializar();
 	void dibuja();
-	bool Jaque(char color); 
-};
+	bool Jaque(char color);
+	void Tomar_Pieza_1VS1(Vector2D origen); 
+	void Soltar_Pieza_1VS1(Vector2D destino);
 
+};
