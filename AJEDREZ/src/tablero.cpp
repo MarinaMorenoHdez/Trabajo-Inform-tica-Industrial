@@ -236,6 +236,26 @@ void Tablero::inicializar(){
 	tablero[4][7] = reinaNegra;
 
 }
+void Tablero:: dibuja(){
+	
+	//dibujar fondo
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,
+		ETSIDI::getTexture("imagenes/inicio.png").id);
+	glDisable(GL_LIGHTING);
+	glBegin(GL_POLYGON);
+	glColor3f(1, 1, 1);
+	glTexCoord2d(0, 1); glVertex2d(-15, -4); //inferior izquierda
+	glTexCoord2d(1, 1); glVertex2d(45, -4); //Inferior derecha
+	glTexCoord2d(1, 0); glVertex2d(45, 40); //Superior derecha
+	glTexCoord2d(0, 0); glVertex2d(-15, 40); //Superior izquierda
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);
+	
+
+	
+}
 
 bool Tablero::Jaque(char color)
 {
