@@ -2,9 +2,6 @@
 char Pieza::getColor() const {
     return color;
 }
-
-#include "pieza.h"
-
 void Pieza::movimientosHorVer(Pieza* tablero[10][8], const Vector2D& posicion, vector<Vector2D>& movs) {
     // Movimientos de torre (horizontal y vertical)
     int dxTorre[] = { 1, -1, 0, 0 };
