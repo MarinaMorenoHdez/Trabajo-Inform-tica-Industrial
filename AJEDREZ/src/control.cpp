@@ -1,7 +1,10 @@
 #include "control.h"
 #include <iostream>
-#include "freeglut.h" // Reemplaza <GL/freeglut.h> si da error
+#include "freeglut.h" 
 #include <ETSIDI.h>
+#include "mundo.h"      
+#include "tablero.h"    
+
 
 void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo, bool TeclaSp, bool TeclaCtr) {
     if (!abajo) return;
@@ -95,6 +98,22 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
         mundo.MouseButton(tipo_oponente, x, y, boton, abajo, TeclaSp, TeclaCtr);
         break;
 
+    case JUEGO_1VS1:
+    {
+        Vector2D coord = mouseToBoardCoords(x, y); // conviertes a coordenadas del tablero
+
+        if (boton == GLUT_LEFT_BUTTON && abajo)
+            mundo.getTablero().Tomar_Pieza_1VS1(coord);
+
+
+        else if (boton == GLUT_RIGHT_BUTTON && abajo)
+            mundo.getTablero().Soltar_Pieza_1VS1(coord);
+
+
+        break;
+    }
+
+
     default:
         break;
     }
@@ -134,5 +153,29 @@ void control::dibuja() {
 }
 
 void control::tecla(unsigned char key) {
-    // Teclado desactivado para navegación entre pantallas
+    
+}
+
+//convertir coordenadas del ratón a coordenadas del tablero
+
+Vector2D control::mouseToBoardCoords(int x, int y)
+{
+    GLdouble modelview[16], projection[16];
+    GLint viewport[4];
+    float winX, winY;
+    double worldX, worldY, worldZ;
+
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    winX = (float)x;
+    winY = (float)viewport[3] - (float)y;
+
+    gluUnProject(winX, winY, 0, modelview, projection, viewport, &worldX, &worldY, &worldZ);
+
+    int col = (int)(worldX / 4.0);  // Suponiendo casillas de 4x4
+    int row = (int)(worldY / 4.0);
+
+    return Vector2D{ col, row };
 }
