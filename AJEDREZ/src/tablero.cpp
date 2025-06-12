@@ -35,8 +35,26 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	}
 
 	if (!valido) return false;
-	//captura de la pieza contraria, eliminarla de lista de piezas
+	//simulación del movimiento para ver si se deja al propio rey en jaque 
 	Pieza* destinoPieza = tablero[destino.x][destino.y]; //ver si hay una pieza en la casilla destino
+	Vector2D origenOriginal = pieza->getPosicion();
+	tablero[origen.x][origen.y] = nullptr;
+	tablero[destino.x][destino.y] = pieza;
+	pieza->mueve(destino);
+
+	bool enJaque = Jaque(turno);
+	
+	// Revertir simulación
+	pieza->mueve(origenOriginal);
+	tablero[origen.x][origen.y] = pieza;
+	tablero[destino.x][destino.y] = destinoPieza;
+
+	if (enJaque) {
+		std::cout << "¡Movimiento no permitido! Tu.\n";
+		return false;
+	}
+	
+	//movimiento real
 	if (destinoPieza != nullptr) { //comprobar si hay pieza para comer
 	// Eliminar del vector de piezas
 	auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
@@ -46,10 +64,16 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 
 	tablero[destino.x][destino.y] = pieza;
 	tablero[origen.x][origen.y] = nullptr;
-	pieza->mueve(Vector2D(destino.x, destino.y));
+	pieza->mueve(destino);
 	cambiarTurno();
+	// Aviso de jaque
+	char enemigo = (turno == 'B') ? 'N' : 'B';
+	if (Jaque(enemigo)) {
+		std::cout << "¡Jaque al Rey " << enemigo << "!\n";
+	}
 	return true;
 }
+
 Tablero::~Tablero() {
 	for (auto pieza : piezas) {
 		delete pieza;
