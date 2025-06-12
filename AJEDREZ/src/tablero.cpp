@@ -213,6 +213,36 @@ void Tablero::inicializar(){
 
 }
 
+bool Tablero::Jaque(char color)
+{
+	Vector2D posicionRey;
+	bool reyEncontrado = false;
+
+	// Buscar al rey del color dado
+	for (Pieza* p : piezas) {
+		if (p->getColor() == color && p->getTipo() == tipo::REY) {
+			posicionRey = p->getPosicion();
+			reyEncontrado = true;
+			break;
+		}
+	}
+
+	if (!reyEncontrado) return false; // No hay rey 
+
+	// Comprobar si alguna pieza enemiga puede atacarlo
+	for (Pieza* p : piezas) {
+		if (p->getColor() != color) {
+			std::vector<Vector2D> movs = p->movimientosPosibles(tablero);
+			for (const Vector2D& m : movs) {
+				if (m.x == posicionRey.x && m.y == posicionRey.y) {
+					return true; // Jaque detectado
+				}
+			}
+		}
+	}
+
+	return false; // No hay jaque
+}
 
 
 
