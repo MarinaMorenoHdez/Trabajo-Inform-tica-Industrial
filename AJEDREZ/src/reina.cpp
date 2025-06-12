@@ -13,7 +13,7 @@ std::vector<Vector2D> Reina::movimientosPosibles(Pieza* tablero[10][8])
     return movs;
 }
 void Reina::dibuja() {
-    std::string ruta = (color == 'B') ? "imagenes/reinarojo.png" : "imagenes/reinaazules.png";
+    std::string ruta = (color == 'B') ? "imagenes/reinaroja.png" : "imagenes/reinaazules.png";
     ETSIDI::Sprite sprite(ruta.c_str());
     sprite.setSize(4, 4);  
 
