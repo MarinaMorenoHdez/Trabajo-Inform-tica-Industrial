@@ -35,6 +35,14 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	}
 
 	if (!valido) return false;
+	//captura de la pieza contraria, eliminarla de lista de piezas
+	Pieza* destinoPieza = tablero[destino.x][destino.y]; //ver si hay una pieza en la casilla destino
+	if (destinoPieza != nullptr && destinoPieza->getColor() != turno) { //comprobar si hay pieza y es de color contrario
+	// Eliminar del vector de piezas
+	auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
+	if (it != piezas.end()) piezas.erase(it);
+	delete destinoPieza;
+	}
 
 	tablero[destino.x][destino.y] = pieza;
 	tablero[origen.x][origen.y] = nullptr;
