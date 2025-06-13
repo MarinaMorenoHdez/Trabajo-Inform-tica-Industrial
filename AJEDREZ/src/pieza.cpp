@@ -46,3 +46,9 @@ void Pieza::movimientosDiagonal(Pieza* tablero[10][8], const Vector2D& posicion,
     }
 }
 
+void Pieza::borrar(Pieza*& ptr) {
+    if (ptr != nullptr) {
+        delete ptr;
+        ptr = nullptr;
+    }
+}
