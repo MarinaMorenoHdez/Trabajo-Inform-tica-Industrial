@@ -1,4 +1,10 @@
 #include "tablero.h"
+#include "iostream"
+#include "freeglut.h"
+#include <ETSIDI.h>
+#include "control.h"
+
+
 using namespace std;
 
 Tablero::Tablero() {
@@ -84,6 +90,98 @@ Tablero::~Tablero() {
 void Tablero::cambiarTurno() {
 	turno = (turno == 'B') ? 'N' : 'B';
 }
+void Tablero::dibuja() {
+	// DIBUJAR FONDO PRIMERO
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/inicio.png").id);
+
+	glBegin(GL_POLYGON);
+	glColor3f(1, 1, 1);
+	glTexCoord2d(0, 1); glVertex3d(-15, -4, -1); 
+	glTexCoord2d(1, 1); glVertex3d(45, -4, -1);
+	glTexCoord2d(1, 0); glVertex3d(45, 40, -1);
+	glTexCoord2d(0, 0); glVertex3d(-15, 40, -1);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+
+	// DIBUJAR TABLERO CON CASILLAS
+	float casillaSize = 4.0f;
+	float offsetX = 0.0f;
+	float offsetY = 0.0f;
+
+	for (int fila = 0; fila < 8; ++fila) {
+		for (int col = 0; col < 10; ++col) {
+			if ((fila + col) % 2 == 0)
+				glColor3f(0.9f, 0.9f, 0.9f); // claro
+			else
+				glColor3f(0.2f, 0.2f, 0.2f); // oscuro
+
+			float x1 = offsetX + col * casillaSize;
+			float y1 = offsetY + fila * casillaSize;
+			float x2 = x1 + casillaSize;
+			float y2 = y1 + casillaSize;
+
+			glBegin(GL_QUADS);
+			glVertex3f(x1, y1, 0);  
+			glVertex3f(x2, y1, 0);
+			glVertex3f(x2, y2, 0);
+			glVertex3f(x1, y2, 0);
+			glEnd();
+		}
+	}
+
+	// DIBUJAR CASILLA SELECCIONADA resaltar
+	//HAY Q CAMBIARLO NO FUNCIONA TIENE Q SER COMO CONTROL.CPP
+	//Vector2D control::mouseToBoardCoords(int x, int y)
+	//PASAR LAS COORDENADAS DE SELECCION AQUI 
+if (refControl && refControl->haySeleccion()) {
+    Vector2D celda = refControl->getCasillaSeleccionada();
+    float casillaSize = 4.0f;
+    float offsetX = 0.0f;
+    float offsetY = 0.0f;
+
+    float x = offsetX + celda.x * casillaSize;
+    float y = offsetY + celda.y * casillaSize;
+
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glColor4f(1.0f, 1.0f, 0.0f, 0.5f);  // amarillo semitransparente
+
+    glBegin(GL_QUADS);
+    glVertex3f(x, y, 0.01f);  // z bajo para estar debajo de la pieza
+    glVertex3f(x + casillaSize, y, 0.01f);
+    glVertex3f(x + casillaSize, y + casillaSize, 0.01f);
+    glVertex3f(x, y + casillaSize, 0.01f);
+    glEnd();
+
+    glDisable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+}
+
+
+	//dibujar pieza
+	for (int x = 0; x < 10; ++x) {
+		for (int y = 0; y < 8; ++y) {
+			Pieza* p = tablero[x][y];
+			if (p != nullptr) {
+				p->dibuja();  // Dibujar cada pieza
+			}
+		}
+
+	}
+
+	
+	}
+
+
+
 
 void Tablero::inicializar(){
 	// Peones blancos
@@ -236,64 +334,6 @@ void Tablero::inicializar(){
 	tablero[4][7] = reinaNegra;
 
 }
-void Tablero:: dibuja(){
-	
-		// DIBUJAR FONDO
-	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/inicio.png").id);
-
-	glBegin(GL_POLYGON);
-	glColor3f(1, 1, 1);
-	glTexCoord2d(0, 1); glVertex3d(-15, -4, -1); 
-	glTexCoord2d(1, 1); glVertex3d(45, -4, -1);
-	glTexCoord2d(1, 0); glVertex3d(45, 40, -1);
-	glTexCoord2d(0, 0); glVertex3d(-15, 40, -1);
-	glEnd();
-
-	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_LIGHTING);
-
-	// DIBUJAR TABLERO CON CASILLAS
-	float casillaSize = 4.0f;
-	float offsetX = 0.0f;
-	float offsetY = 0.0f;
-
-	for (int fila = 0; fila < 8; ++fila) {
-		for (int col = 0; col < 10; ++col) {
-			if ((fila + col) % 2 == 0)
-				glColor3f(0.9f, 0.9f, 0.9f); // claro
-			else
-				glColor3f(0.2f, 0.2f, 0.2f); // oscuro
-
-			float x1 = offsetX + col * casillaSize;
-			float y1 = offsetY + fila * casillaSize;
-			float x2 = x1 + casillaSize;
-			float y2 = y1 + casillaSize;
-
-			glBegin(GL_QUADS);
-			glVertex3f(x1, y1, 0);  
-			glVertex3f(x2, y1, 0);
-			glVertex3f(x2, y2, 0);
-			glVertex3f(x1, y2, 0);
-			glEnd();
-		}
-	}
-
-	//dibujar pieza
-	for (int x = 0; x < 10; ++x) {
-		for (int y = 0; y < 8; ++y) {
-			Pieza* p = tablero[x][y];
-			if (p != nullptr) {
-				p->dibuja();  // Dibujar cada pieza
-			}
-		}
-
-	}
-	
-
-	
-}
 
 bool Tablero::Jaque(char color)
 {
@@ -326,76 +366,8 @@ bool Tablero::Jaque(char color)
 	return false; // No hay jaque
 }
 
-void Tablero::Tomar_Pieza_1VS1(Vector2D origen) {
-	pInd = -1;
 
-	if (tablero[origen.x][origen.y] != nullptr) {
-		for (int z = 0; z < piezas.size(); z++) {
-			if (piezas[z]->getPosicion().x == origen.x && piezas[z]->getPosicion().y == origen.y) {
-				pInd = z;
-				break;
-			}
-		}
-		if (pInd != -1 && piezas[pInd]->getColor() != turno) {
-			pInd = -1;
-			ETSIDI::play("sonidos/SonidoError.wav");
-		}
-		else {
-			pI = origen.x;
-			pJ = origen.y;
-		}
-	}
-}
 
-void Tablero::Soltar_Pieza_1VS1(Vector2D destino) {
-	if (pInd == -1) return;
-
-	Pieza* seleccionada = piezas[pInd];
-	if (seleccionada && seleccionada->getColor() == turno) {
-		bool valido = false;
-		auto posibles = seleccionada->movimientosPosibles(tablero);
-		for (const auto& m : posibles) {
-			if (m.x == destino.x && m.y == destino.y) {
-				valido = true;
-				break;
-			}
-		}
-
-		if (valido) {
-			Pieza* destinoPieza = tablero[destino.x][destino.y];
-
-			if (destinoPieza != nullptr) {
-				for (int i = 0; i < piezas.size(); ++i) {
-					if (piezas[i] == destinoPieza) {
-						ETSIDI::play("sonidos/ComerFicha.wav");
-						delete piezas[i];
-						piezas.erase(piezas.begin() + i);
-						if (i < pInd) pInd--;
-						break;
-					}
-				}
-			}
-
-			tablero[destino.x][destino.y] = seleccionada;
-			tablero[pI][pJ] = nullptr;
-			seleccionada->mueve(destino);
-			cambiarTurno();
-
-			ETSIDI::play("sonidos/MoverFicha.wav");
-
-			char enemigo = (turno == 'B') ? 'N' : 'B';
-			if (Jaque(enemigo)) {
-				std::cout << "¡Jaque al Rey " << enemigo << "!\n";
-			}
-
-		}
-		else {
-			ETSIDI::play("sonidos/SonidoError.wav");
-		}
-	}
-
-	pInd = -1;
-}
 
 
 
