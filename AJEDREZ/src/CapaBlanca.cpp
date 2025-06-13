@@ -6,6 +6,8 @@
 
 //Tablero tablero;
 control juego;
+control c;  // Este constructor invoca mundo.setControl(&c)
+
 
 
 //NO HACE FALTA LLAMARLAS EXPLICITAMENTE
