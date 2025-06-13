@@ -17,7 +17,8 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 
     std::cout << "Click en coords mundo: x=" << x_mundo << ", y=" << y_mundo << std::endl;
 
-    switch (estado) {
+    switch (estado) 
+    {
     case INICIO:
         if (x_mundo >= 10 && x_mundo <= 30 && y_mundo >= 3 && y_mundo <= 10) {
             estado = START;
@@ -95,28 +96,16 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 
 
     case JUEGO:
-        mundo.MouseButton(tipo_oponente, x, y, boton, abajo, TeclaSp, TeclaCtr);
-        break;
-
     case JUEGO_1VS1:
     {
-        Vector2D coord = mouseToBoardCoords(x, y); // conviertes a coordenadas del tablero
-
-        if (boton == GLUT_LEFT_BUTTON && abajo)
-            mundo.getTablero().Tomar_Pieza_1VS1(coord);
-
-
-        else if (boton == GLUT_RIGHT_BUTTON && abajo)
-            mundo.getTablero().Soltar_Pieza_1VS1(coord);
-
-
+        if (boton == GLUT_LEFT_BUTTON && abajo) {
+            Vector2D coord = mouseToBoardCoords(x, y);
+            gestionarMovimientoJugador(coord);
+        }
         break;
     }
-
-
-    default:
-        break;
     }
+    
 }
 
 void control::dibuja() {
@@ -156,26 +145,51 @@ void control::tecla(unsigned char key) {
     
 }
 
-//convertir coordenadas del ratón a coordenadas del tablero
 
-Vector2D control::mouseToBoardCoords(int x, int y)
-{
-    GLdouble modelview[16], projection[16];
-    GLint viewport[4];
-    float winX, winY;
-    double worldX, worldY, worldZ;
 
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-    glGetDoublev(GL_PROJECTION_MATRIX, projection);
-    glGetIntegerv(GL_VIEWPORT, viewport);
 
-    winX = (float)x;
-    winY = (float)viewport[3] - (float)y;
 
-    gluUnProject(winX, winY, 0, modelview, projection, viewport, &worldX, &worldY, &worldZ);
 
-    int col = (int)(worldX / 4.0);  // Suponiendo casillas de 4x4
-    int row = (int)(worldY / 4.0);
+void control::gestionarMovimientoJugador(Vector2D coord) {
+	Pieza* p = mundo.getTablero().getPiezaEn(coord);
+
+	if (!piezaSeleccionada) {
+		// Primer clic: seleccionar origen
+		if (p && p->getColor() == mundo.getTurno()) {
+			seleccion = coord;              // almacenar origen
+			piezaSeleccionada = true;       // marcar como seleccionada
+		}
+	}
+	else {
+		// Segundo clic: destino
+		bool exito = mundo.getTablero().moverPieza(seleccion, coord); // mover con origen y destino
+		piezaSeleccionada = false; // reset
+
+		// Si es contra la máquina, actuar después
+		if (mundo.get_oponente() == 1 && exito) {
+			// ejecutarIA();  // si tienes IA
+		}
+	}
+}
+
+Vector2D control::mouseToBoardCoords(int x, int y) {
+    int anchoVentana = glutGet(GLUT_WINDOW_WIDTH);
+    int altoVentana = glutGet(GLUT_WINDOW_HEIGHT);
+
+    float x_mundo = -15.0f + (x / (float)anchoVentana) * 60.0f;
+    float y_mundo = 40.0f - (y / (float)altoVentana) * 44.0f;
+
+    int col = static_cast<int>(x_mundo / 4.0f);
+    int row = static_cast<int>(y_mundo / 4.0f);
+
+    std::cout << "Click en coords mundo: x=" << x_mundo << ", y=" << y_mundo << std::endl;
+    std::cout << "Click en casilla tablero: col = " << col << ", fila = " << row << std::endl;
 
     return Vector2D{ col, row };
+}
+
+
+//CONSTRUCTOR
+control::control() {
+    mundo.setControl(this);  
 }
