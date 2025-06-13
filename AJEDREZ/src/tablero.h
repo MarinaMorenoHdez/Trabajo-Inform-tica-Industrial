@@ -21,6 +21,7 @@ private:
 	int pInd = -1;
 	int pI = -1, pJ = -1;
 	control* refControl = nullptr;  
+	bool partidaFinalizada = false;
 
 public:
 	Tablero();
@@ -37,4 +38,5 @@ public:
 	char getTurno() const { return turno; }
 
 	void setControl(control* c) { refControl = c; }
+	bool isPartidaFinalizada() const { return partidaFinalizada; }
 };
