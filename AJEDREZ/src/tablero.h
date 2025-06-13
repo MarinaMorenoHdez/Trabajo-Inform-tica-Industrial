@@ -31,6 +31,7 @@ public:
 	void inicializar();
 	void dibuja();
 	bool Jaque(char color);
+	bool JaqueMate(char color);
 
 	Pieza* getPiezaEn(Vector2D pos) const { return tablero[pos.x][pos.y]; }
 	char getTurno() const { return turno; }
