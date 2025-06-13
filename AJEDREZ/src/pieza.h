@@ -24,4 +24,5 @@ public:
 	void movimientosDiagonal(Pieza* tablero[10][8], const Vector2D& posicion, vector<Vector2D>& movs);
 	tipo getTipo() const { return t; }
 	Vector2D getPosicion() const { return posicion; }
+	void borrar(Pieza*& ptr);
 };
