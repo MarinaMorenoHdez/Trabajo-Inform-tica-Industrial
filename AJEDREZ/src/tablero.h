@@ -11,25 +11,29 @@
 #include "rey.h"
 #include "alfil.h"
 
+class control; 
 
-class Tablero
-{
+class Tablero {
 private:
 	Pieza* tablero[10][8];
-	std::vector<Pieza*> piezas; // lista de piezas del juego
-	char turno; // 'B' = blancas, 'N' = negras
-	
+	std::vector<Pieza*> piezas;
+	char turno;
+	int pInd = -1;
+	int pI = -1, pJ = -1;
+	control* refControl = nullptr;  
 
 public:
-	Tablero(); // Constructor
-	~Tablero(); // Destructor
+	Tablero();
+	~Tablero();
 
 	bool moverPieza(Vector2D origen, Vector2D destino);
 	void cambiarTurno();
 	void inicializar();
 	void dibuja();
 	bool Jaque(char color);
-	void Tomar_Pieza_1VS1(Vector2D origen); 
-	void Soltar_Pieza_1VS1(Vector2D destino);
 
+	Pieza* getPiezaEn(Vector2D pos) const { return tablero[pos.x][pos.y]; }
+	char getTurno() const { return turno; }
+
+	void setControl(control* c) { refControl = c; }
 };
