@@ -56,7 +56,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	tablero[destino.x][destino.y] = destinoPieza;
 
 	if (enJaque) {
-		std::cout << "¡Movimiento no permitido! Tu.\n";
+		std::cout <<"Movimiento no permitido, el Rey sigue en Jaque.\n";
 		return false;
 	}
 	
@@ -75,8 +75,12 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	// Aviso de jaque
 	char enemigo = (turno == 'B') ? 'N' : 'B';
 	if (Jaque(enemigo)) {
-		std::cout << "¡Jaque al Rey " << enemigo << "!\n";
+	std::cout << "¡Jaque al Rey " << enemigo << "!\n";
+	if (JaqueMate(enemigo)) {
+		std::cout << "¡Jaque mate! Gana el jugador " << turno << std::endl;
+		// Aquí puedes gestionar el final de la partida si lo deseas
 	}
+}
 	return true;
 }
 
@@ -368,7 +372,37 @@ bool Tablero::Jaque(char color)
 
 
 
+bool Tablero::JaqueMate(char color) {
+		if (!Jaque(color)) return false; // Si no está en jaque, no es jaque mate
 
+		// Para cada pieza del color del turno
+		for (Pieza* p : piezas) {
+			if (p->getColor() == color) {
+				std::vector<Vector2D> movs = p->movimientosPosibles(tablero);
+				Vector2D origen = p->getPosicion();
+
+				for (const Vector2D& destino : movs) {
+					// Simular el movimiento
+					Pieza* destinoPieza = tablero[destino.x][destino.y];
+					tablero[origen.x][origen.y] = nullptr;
+					tablero[destino.x][destino.y] = p;
+					p->mueve(destino);
+
+					bool sigueEnJaque = Jaque(color);
+
+					// Revertir simulación
+					p->mueve(origen);
+					tablero[origen.x][origen.y] = p;
+					tablero[destino.x][destino.y] = destinoPieza;
+
+					if (!sigueEnJaque)
+						return false; // Hay al menos un movimiento que evita el jaque mate
+				}
+			}
+		}
+		// Si ningún movimiento evita el jaque, es jaque mate
+		return true;
+}
 
 
 
