@@ -151,6 +151,10 @@ void control::tecla(unsigned char key) {
 
 
 void control::gestionarMovimientoJugador(Vector2D coord) {
+	if (mundo.getTablero().isPartidaFinalizada()) {
+    	    std::cout << "¡Jaque Mate! La partida ha terminado.\n";
+   	return;
+	}
 	Pieza* p = mundo.getTablero().getPiezaEn(coord);
 
 	if (!piezaSeleccionada) {
