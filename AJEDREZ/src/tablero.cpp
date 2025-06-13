@@ -78,7 +78,8 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	std::cout << "¡Jaque al Rey " << enemigo << "!\n";
 	if (JaqueMate(enemigo)) {
 		std::cout << "¡Jaque mate! Gana el jugador " << turno << std::endl;
-		// Aquí puedes gestionar el final de la partida si lo deseas
+		partidaFinalizada = true; // Partida finalizada
+		
 	}
 }
 	return true;
