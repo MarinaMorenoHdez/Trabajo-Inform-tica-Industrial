@@ -99,7 +99,7 @@ void Tablero::dibuja() {
 	// DIBUJAR FONDO PRIMERO
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/inicio.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/tablero.png").id);
 
 	glBegin(GL_POLYGON);
 	glColor3f(1, 1, 1);
