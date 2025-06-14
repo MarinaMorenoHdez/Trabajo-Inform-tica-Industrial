@@ -490,7 +490,18 @@ std::vector<Movimiento> Tablero::generarTodosMovimientos(bool soloCapturas) {
 
 	return lista;
 }
+void Tablero::borrar() {
+	for (Pieza* pieza : piezas) {
+		delete pieza; 
+	}
 
+	piezas.clear(); 
+	for (int i = 0; i < 10; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			tablero[i][j] = nullptr;
+		}
+	}
+}
 
 
 
