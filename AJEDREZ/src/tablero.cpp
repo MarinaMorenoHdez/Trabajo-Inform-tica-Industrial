@@ -138,6 +138,35 @@ void Tablero::dibuja() {
 		}
 	}
 
+	if (refControl && refControl->haySeleccion()) {
+		const std::vector<Vector2D>& posibles = refControl->getCasillasPosibles();
+		float casillaSize = 4.0f;
+		float offsetX = 0.0f;
+		float offsetY = 0.0f;
+
+		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(0.0f, 1.0f, 0.0f, 0.3f);  // verde semitransparente
+
+		for (const Vector2D& pos : posibles) {
+			float x = offsetX + pos.x * casillaSize;
+			float y = offsetY + pos.y * casillaSize;
+
+			glBegin(GL_QUADS);
+			glVertex3f(x, y, 0.01f);
+			glVertex3f(x + casillaSize, y, 0.01f);
+			glVertex3f(x + casillaSize, y + casillaSize, 0.01f);
+			glVertex3f(x, y + casillaSize, 0.01f);
+			glEnd();
+		}
+
+		glDisable(GL_BLEND);
+		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_LIGHTING);
+	}
+
 	// DIBUJAR CASILLA SELECCIONADA resaltar
 	//HAY Q CAMBIARLO NO FUNCIONA TIENE Q SER COMO CONTROL.CPP
 	//Vector2D control::mouseToBoardCoords(int x, int y)
@@ -403,6 +432,57 @@ bool Tablero::JaqueMate(char color) {
 		}
 		// Si ningún movimiento evita el jaque, es jaque mate
 		return true;
+}
+
+
+std::vector<Vector2D> Tablero::getMovimientosLegales(Vector2D origen) {
+	Pieza* p = getPiezaEn(origen);  
+	if (!p) return {};
+
+	return p->movimientosPosibles(tablero);  
+}
+
+
+std::vector<Movimiento> Tablero::generarTodosMovimientos(bool soloCapturas) {
+	std::vector<Movimiento> lista;
+
+	for (int x = 0; x < 10; ++x) {
+		for (int y = 0; y < 8; ++y) {
+			Pieza* p = tablero[x][y];
+			if (p && p->getColor() == turno) {
+				Vector2D origen = { x, y };
+				std::vector<Vector2D> posibles = p->movimientosPosibles(tablero);
+
+				for (const Vector2D& destino : posibles) {
+					Pieza* piezaDestino = tablero[destino.x][destino.y];
+
+					// Si se piden solo capturas y no hay pieza enemiga, se ignora
+					if (soloCapturas && (!piezaDestino || piezaDestino->getColor() == turno))
+						continue;
+
+					// Simular movimiento
+					Pieza* tmp = tablero[destino.x][destino.y];
+					tablero[x][y] = nullptr;
+					tablero[destino.x][destino.y] = p;
+					Vector2D posOriginal = p->getPosicion();
+					p->mueve(destino);
+
+					bool enJaque = Jaque(turno);
+
+					// Revertir simulación
+					p->mueve(posOriginal);
+					tablero[x][y] = p;
+					tablero[destino.x][destino.y] = tmp;
+
+					if (!enJaque) {
+						lista.emplace_back(origen, destino);
+					}
+				}
+			}
+		}
+	}
+
+	return lista;
 }
 
 
