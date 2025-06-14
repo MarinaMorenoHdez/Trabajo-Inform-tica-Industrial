@@ -123,6 +123,9 @@ void control::dibuja() {
     case JUEGO:
         mundo.dibuja();
         return;
+    case GANAROJO: texId = ETSIDI::getTexture("imagenes/rojoganador.png").id; break;
+    case GANAAZUL: texId = ETSIDI::getTexture("imagenes/azulganador.png").id; break;
+    case TABLAS: texId = ETSIDI::getTexture("imagenes/tablas.png").id; break;
     default:
         return;
     }
