@@ -151,29 +151,23 @@ void control::tecla(unsigned char key) {
 
 
 void control::gestionarMovimientoJugador(Vector2D coord) {
-	if (mundo.getTablero().isPartidaFinalizada()) {
-    	    std::cout << "¡Jaque Mate! La partida ha terminado.\n";
-   	return;
-	}
-	Pieza* p = mundo.getTablero().getPiezaEn(coord);
-
-	if (!piezaSeleccionada) {
-		// Primer clic: seleccionar origen
-		if (p && p->getColor() == mundo.getTurno()) {
-			seleccion = coord;              // almacenar origen
-			piezaSeleccionada = true;       // marcar como seleccionada
-		}
-	}
-	else {
-		// Segundo clic: destino
-		bool exito = mundo.getTablero().moverPieza(seleccion, coord); // mover con origen y destino
-		piezaSeleccionada = false; // reset
-
-		// Si es contra la máquina, actuar después
-		if (mundo.get_oponente() == 1 && exito) {
-			// ejecutarIA();  // si tienes IA
-		}
-	}
+    if (!piezaSeleccionada) {
+        Pieza* p = mundo.getTablero().getPiezaEn(coord);
+        if (p && p->getColor() == mundo.getTablero().getTurno()) {
+            piezaSeleccionada = true;
+            casillaSeleccionada = coord;
+            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);  
+        }
+    }
+    else {
+        if (mundo.getTablero().moverPieza(casillaSeleccionada, coord)) {
+            limpiarSeleccion();  
+        }
+        else {
+            piezaSeleccionada = false;
+            casillasPosibles.clear();
+        }
+    }
 }
 
 Vector2D control::mouseToBoardCoords(int x, int y) {
