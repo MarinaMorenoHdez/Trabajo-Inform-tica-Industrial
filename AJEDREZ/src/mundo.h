@@ -20,4 +20,5 @@ public:
     void MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo, bool TeclaSp, bool TeclaCtr);
 
     void setControl(control* c);  // Para pasar el puntero a control
+    void borrar() { tablero.borrar(); }
 };
