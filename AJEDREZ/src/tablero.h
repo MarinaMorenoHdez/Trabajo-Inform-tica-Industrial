@@ -39,4 +39,6 @@ public:
 
 	void setControl(control* c) { refControl = c; }
 	bool isPartidaFinalizada() const { return partidaFinalizada; }
+	std::vector<Movimiento> generarTodosMovimientos(bool soloCapturas = false);  
+	std::vector<Vector2D> getMovimientosLegales(Vector2D origen);  
 };
