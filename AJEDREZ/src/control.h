@@ -32,6 +32,7 @@ public:
 	void dibuja();
 	void MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo, bool TeclaSp, bool TeclaCtr);
 	int Get_Estado() { return estado; }
+	void Set_Estado(int e) { estado = e; }
 	Vector2D mouseToBoardCoords(int x, int y);
 	
 	Vector2D getCasillaSeleccionada() const { return casillaSeleccionada; }
