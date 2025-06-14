@@ -19,13 +19,13 @@ class control {
 	int estado = 1;
 	Mundo mundo;
 
-private:
+
 private:
 	Vector2D casillaSeleccionada = { -1, -1 };  // Inicialmente inválida
 	bool piezaSeleccionada = false;
 	Vector2D seleccion;
 	void gestionarMovimientoJugador(Vector2D coord);
-
+	std::vector<Vector2D> casillasPosibles;
 
 public:
 	void tecla(unsigned char key);
@@ -36,6 +36,8 @@ public:
 	
 	Vector2D getCasillaSeleccionada() const { return casillaSeleccionada; }
 	bool haySeleccion() const { return piezaSeleccionada; }
+	const std::vector<Vector2D>& getCasillasPosibles() const { return casillasPosibles; }
+	void limpiarSeleccion() { piezaSeleccionada = false; casillasPosibles.clear(); }
 
 
 	control();
