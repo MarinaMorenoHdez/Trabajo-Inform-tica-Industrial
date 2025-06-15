@@ -21,6 +21,7 @@ Tablero::Tablero() {
 bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 
 	Pieza* pieza = tablero[origen.x][origen.y];
+	Pieza* destinoPieza = tablero[destino.x][destino.y];
 	// No hay pieza en la posición de origen
 	if (!pieza) return false;
 	// Limites tablero (origen y destino)
@@ -30,7 +31,8 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 		return false;
 	//comprobar turno 
 	if (pieza->getColor() != turno) return false;
-
+	// No poder comer a un rey
+	if (destinoPieza->getTipo() == tipo::REY) return false;
 	// Movimientos posibles de cada pieza
 	bool valido = false;
 	std::vector<Vector2D> movs = pieza->movimientosPosibles(tablero);
@@ -47,7 +49,6 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	if (pieza->getTipo() == tipo::PEON) {
 		// Si el movimiento es en diagonal
 		if (origen.x != destino.x) {
-			Pieza* destinoPieza = tablero[destino.x][destino.y];
 			// Solo permite capturar si hay pieza enemiga
 			if (!destinoPieza || destinoPieza->getColor() == turno) {
 				return false;
