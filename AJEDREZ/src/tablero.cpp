@@ -108,6 +108,12 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 			std::cout << "¡Jaque mate! Gana el jugador " << turno << std::endl;
 			partidaFinalizada = true; // Partida finalizada
 			// Aquí puedes gestionar el final de la partida si lo deseas
+			if (refControl != nullptr) {
+				if (turno == 'B')  // Gana blanco (ROJO)
+					refControl->Set_Estado(GANAROJO);
+				else               // Gana negro (AZUL)
+					refControl->Set_Estado(GANAAZUL);
+			}
 		}
 	}
 	cambiarTurno();
