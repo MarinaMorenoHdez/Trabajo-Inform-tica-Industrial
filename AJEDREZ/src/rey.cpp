@@ -18,7 +18,7 @@ std::vector<Vector2D> Rey::movimientosPosibles(Pieza* tablero[10][8])
         }
     }
 
-// Enroque salta una fila de más que el normal, falta que se mueva la torre y comprobar que no hay jaque, eso en tablero
+// Enroque 
 if (!this->getMovida()) {
     int fila = posicion.y;
 
