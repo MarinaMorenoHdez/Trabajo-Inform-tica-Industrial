@@ -22,6 +22,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 
 	Pieza* pieza = tablero[origen.x][origen.y];
 	Pieza* destinoPieza = tablero[destino.x][destino.y];
+	
 	// No hay pieza en la posición de origen
 	if (!pieza) return false;
 	// Limites tablero (origen y destino)
@@ -29,21 +30,22 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 		return false;
 	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8)
 		return false;
+	
 	//comprobar turno 
 	if (pieza->getColor() != turno) return false;
+	
 	// No poder comer a un rey
 	if (destinoPieza->getTipo() == tipo::REY) return false;
+	
 	// Movimientos posibles de cada pieza
 	bool valido = false;
 	std::vector<Vector2D> movs = pieza->movimientosPosibles(tablero);
-
 	for (const auto& ref : movs) {
 		if (ref.x == destino.x && ref.y == destino.y) {
 			valido = true;
 			break;
 		}
 	}
-
 	if (!valido) return false;
 	// FILTRO PARA MOVIMIENTO DIAGONAL DEL PEÓN 
 	if (pieza->getTipo() == tipo::PEON) {
@@ -55,6 +57,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 			}
 		}
 	}
+	
 	// Simulación del movimiento para ver si se deja al propio rey en jaque 
 	Pieza* destinoPieza = tablero[destino.x][destino.y]; // ver si hay una pieza en la casilla destino
 	Vector2D origenOriginal = pieza->getPosicion();
