@@ -108,11 +108,9 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
     {
         if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
             
-            mundo.borrar();
-            mundo.inicializa(0,1);
-            tablero.inicializar();
-            mundo.dibuja();
-            tablero.dibuja();
+           mundo.borrar();
+            mundo.inicializa(0, 1);    
+            mundo.dibuja();            
             estado = JUEGO;
             std::cout << "Reinicio\n";
         }
@@ -125,10 +123,9 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
     case GANAAZUL:
     {
         if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
-            mundo.borrar();
-            mundo.inicializa(0, 1);
-            tablero.inicializar();
-            tablero.dibuja();
+           mundo.borrar();
+            mundo.inicializa(0, 1);    
+            mundo.dibuja();            
             estado = JUEGO;
             std::cout << "Reinicio\n";
         }
