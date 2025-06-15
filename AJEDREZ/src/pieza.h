@@ -12,12 +12,14 @@ protected:
     char color;            // Tipo B o N
     Vector2D posicion;   // Posición en el tablero
 	tipo t;              // Tipo de pieza (Arzobispo, Canciller, etc.)
+	bool movida = false;
 	
 public:
 	Pieza(int x, int y, int c, tipo t) : color(c), posicion(x, y), t(t) {} // Constructor
 	virtual ~Pieza() = 0;
+	bool getMovida() {return movida;} // Para saber
 	char getColor() const;
-	void mueve(Vector2D p) { posicion = p;}
+	void mueve(Vector2D p) { posicion = p; mueve = true;}
 	virtual std::vector<Vector2D> movimientosPosibles(Pieza* tablero[10][8]) = 0; 
 	void movimientosHorVer(Pieza* tablero[10][8], const Vector2D& posicion, vector<Vector2D>& movs);
 	void movimientosCaballo(Pieza* tablero[10][8], const Vector2D& posicion, vector<Vector2D>& movs);
