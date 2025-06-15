@@ -22,7 +22,8 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 
 	Pieza* pieza = tablero[origen.x][origen.y];
 	// No hay pieza en la posición de origen
-	if (!pieza) return false; 
+	if (!pieza) return false;
+	
 	//comprobar turno 
 	if (pieza->getColor() != turno) return false;
 	// Limites tablero
@@ -41,6 +42,17 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	}
 
 	if (!valido) return false;
+	// FILTRO PARA MOVIMIENTO DIAGONAL DEL PEÓN 
+	if (pieza->getTipo() == tipo::PEON) {
+	// Si el movimiento es en diagonal
+	if (origen.x != destino.x) {
+		Pieza* destinoPieza = tablero[destino.x][destino.y];
+		// Solo permite capturar si hay pieza enemiga
+		if (!destinoPieza || destinoPieza->getColor() == turno) {
+			return false;
+		}
+	}
+}
 	//simulación del movimiento para ver si se deja al propio rey en jaque 
 	Pieza* destinoPieza = tablero[destino.x][destino.y]; //ver si hay una pieza en la casilla destino
 	Vector2D origenOriginal = pieza->getPosicion();
@@ -443,11 +455,42 @@ bool Tablero::JaqueMate(char color) {
 
 
 std::vector<Vector2D> Tablero::getMovimientosLegales(Vector2D origen) {
-	Pieza* p = getPiezaEn(origen);  
+	Pieza* p = getPiezaEn(origen);
 	if (!p) return {};
 
-	return p->movimientosPosibles(tablero);  
+	std::vector<Vector2D> movs = p->movimientosPosibles(tablero);
+	std::vector<Vector2D> legales;
+
+	if (p->getTipo() == tipo::PEON) {
+		int x = origen.x;
+		int y = origen.y;
+		char color = p->getColor();
+		int dir = (color == 'B') ? 1 : -1;
+
+		for (const Vector2D& dest : movs) {
+			// Movimiento hacia adelante
+			if (dest.x == x && dest.y == y + dir && tablero[dest.x][dest.y] == nullptr) {
+				legales.push_back(dest);
+			}
+			// Primer movimiento doble hacia adelante
+			else if (dest.x == x && ((color == 'B' && y == 1) || (color == 'N' && y == 6)) &&
+				dest.y == y + 2 * dir &&
+				tablero[x][y + dir] == nullptr && tablero[x][y + 2 * dir] == nullptr) {
+				legales.push_back(dest);
+			}
+			// Captura en diagonal
+			else if (dest.x != x && tablero[dest.x][dest.y] != nullptr &&
+				tablero[dest.x][dest.y]->getColor() != color) {
+				legales.push_back(dest);
+			}
+		}
+		return legales;
+	}
+
+	// Para el resto de piezas, devuelve los movimientos tal cual
+	return movs;
 }
+
 
 
 std::vector<Movimiento> Tablero::generarTodosMovimientos(bool soloCapturas) {
