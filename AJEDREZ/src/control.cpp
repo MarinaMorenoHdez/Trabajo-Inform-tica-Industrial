@@ -189,19 +189,33 @@ void control::tecla(unsigned char key) {
 
 
 
-
 void control::gestionarMovimientoJugador(Vector2D coord) {
+    if (mundo.getTablero().isPartidaFinalizada()) {
+        std::cout << "¡Jaque Mate! La partida ha terminado.\n";
+        return;
+    }
+
+    Pieza* p = mundo.getTablero().getPiezaEn(coord);
+
     if (!piezaSeleccionada) {
-        Pieza* p = mundo.getTablero().getPiezaEn(coord);
         if (p && p->getColor() == mundo.getTablero().getTurno()) {
             piezaSeleccionada = true;
             casillaSeleccionada = coord;
-            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);  
+            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);
         }
     }
     else {
         if (mundo.getTablero().moverPieza(casillaSeleccionada, coord)) {
-            limpiarSeleccion();  
+            limpiarSeleccion();
+
+          //IA
+            if (mundo.get_oponente() == 1 && !mundo.getTablero().isPartidaFinalizada()) {
+                char turno_ia = mundo.getTablero().getTurno();  // Turno ahora le toca a la IA
+                Movimiento mejor = ia.calcularMejorMovimiento(mundo.getTablero(), turno_ia);
+                if (mejor.origen.x != -1) {
+                    mundo.getTablero().moverPieza(mejor.origen, mejor.destino);
+                }
+            }
         }
         else {
             piezaSeleccionada = false;
@@ -209,6 +223,7 @@ void control::gestionarMovimientoJugador(Vector2D coord) {
         }
     }
 }
+
 
 Vector2D control::mouseToBoardCoords(int x, int y) {
     int anchoVentana = glutGet(GLUT_WINDOW_WIDTH);
