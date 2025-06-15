@@ -71,7 +71,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	tablero[destino.x][destino.y] = pieza;
 	tablero[origen.x][origen.y] = nullptr;
 	pieza->mueve(destino);
-	cambiarTurno();
+	
 	// Aviso de jaque
 	char enemigo = (turno == 'B') ? 'N' : 'B';
 	if (Jaque(enemigo)) {
@@ -87,7 +87,8 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 			}
 		
 	}
-}
+	}
+	cambiarTurno();
 	return true;
 }
 
