@@ -468,6 +468,10 @@ bool Tablero::JaqueMate(char color) {
 		// Si ningún movimiento evita el jaque, es jaque mate
 		return true;
 }
+void Tablero::setPiezaEn(Vector2D pos, Pieza* p) 
+{
+	tablero[pos.x][pos.y] = p;
+}
 
 
 std::vector<Vector2D> Tablero::getMovimientosLegales(Vector2D origen) {
