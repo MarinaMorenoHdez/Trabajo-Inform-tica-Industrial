@@ -23,12 +23,13 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	Pieza* pieza = tablero[origen.x][origen.y];
 	// No hay pieza en la posición de origen
 	if (!pieza) return false;
-	
-	//comprobar turno 
-	if (pieza->getColor() != turno) return false;
-	// Limites tablero
+	// Limites tablero (origen y destino)
+	if (origen.x < 0 || origen.x >= 10 || origen.y < 0 || origen.y >= 8)
+		return false;
 	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8)
 		return false;
+	//comprobar turno 
+	if (pieza->getColor() != turno) return false;
 
 	// Movimientos posibles de cada pieza
 	bool valido = false;
@@ -44,31 +45,45 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	if (!valido) return false;
 	// FILTRO PARA MOVIMIENTO DIAGONAL DEL PEÓN 
 	if (pieza->getTipo() == tipo::PEON) {
-	// Si el movimiento es en diagonal
-	if (origen.x != destino.x) {
-		Pieza* destinoPieza = tablero[destino.x][destino.y];
-		// Solo permite capturar si hay pieza enemiga
-		if (!destinoPieza || destinoPieza->getColor() == turno) {
-			return false;
+		// Si el movimiento es en diagonal
+		if (origen.x != destino.x) {
+			Pieza* destinoPieza = tablero[destino.x][destino.y];
+			// Solo permite capturar si hay pieza enemiga
+			if (!destinoPieza || destinoPieza->getColor() == turno) {
+				return false;
+			}
 		}
 	}
-}
-	//simulación del movimiento para ver si se deja al propio rey en jaque 
-	Pieza* destinoPieza = tablero[destino.x][destino.y]; //ver si hay una pieza en la casilla destino
+	// Simulación del movimiento para ver si se deja al propio rey en jaque 
+	Pieza* destinoPieza = tablero[destino.x][destino.y]; // ver si hay una pieza en la casilla destino
 	Vector2D origenOriginal = pieza->getPosicion();
+
+	// --- ELIMINAR TEMPORALMENTE LA PIEZA CAPTURADA DEL VECTOR piezas ---
+	auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
+	bool piezaEliminada = false;
+	if (destinoPieza != nullptr && it != piezas.end()) {
+		piezas.erase(it);
+		piezaEliminada = true;
+	}
+
 	tablero[origen.x][origen.y] = nullptr;
 	tablero[destino.x][destino.y] = pieza;
 	pieza->mueve(destino);
 
 	bool enJaque = Jaque(turno);
-	
+
 	// Revertir simulación
 	pieza->mueve(origenOriginal);
 	tablero[origen.x][origen.y] = pieza;
 	tablero[destino.x][destino.y] = destinoPieza;
 
+	// --- RESTAURAR LA PIEZA CAPTURADA AL VECTOR piezas ---
+	if (piezaEliminada) {
+		piezas.push_back(destinoPieza);
+	}
+
 	if (enJaque) {
-		std::cout <<"Movimiento no permitido, el Rey sigue en Jaque.\n";
+		std::cout << "Movimiento no permitido, El rey sigue en jaque\n";
 		return false;
 	}
 	
@@ -83,22 +98,17 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	tablero[destino.x][destino.y] = pieza;
 	tablero[origen.x][origen.y] = nullptr;
 	pieza->mueve(destino);
-	
-	// Aviso de jaque
+	// Aviso de jaque ó jaque mate
 	char enemigo = (turno == 'B') ? 'N' : 'B';
+	std::cout << "[DEBUG] Turno actual: " << turno << ", comprobando jaque a: " << enemigo << std::endl;
+	// Comprobar si el rey del enemigo está en jaque
 	if (Jaque(enemigo)) {
-	std::cout << "¡Jaque al Rey " << enemigo << "!\n";
-	if (JaqueMate(enemigo)) {
-		std::cout << "¡Jaque mate! Gana el jugador " << turno << std::endl;
-		partidaFinalizada = true; // Partida finalizada
-		if (refControl != nullptr) {
-				if (turno == 'B')  
-					refControl->Set_Estado(GANAROJO);
-				else               
-					refControl->Set_Estado(GANAAZUL);
-			}
-		
-	}
+		std::cout << "¡Jaque al Rey " << enemigo << "!\n";
+		if (JaqueMate(enemigo)) {
+			std::cout << "¡Jaque mate! Gana el jugador " << turno << std::endl;
+			partidaFinalizada = true; // Partida finalizada
+			// Aquí puedes gestionar el final de la partida si lo deseas
+		}
 	}
 	cambiarTurno();
 	return true;
