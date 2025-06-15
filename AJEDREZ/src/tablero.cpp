@@ -48,6 +48,27 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	}
 	if (!valido) return false;
 
+	// Enroque 
+	if (!this->getMovida()) {
+	    int fila = posicion.y;
+	
+	    // Enroque corto 
+	    Pieza* torreCorta = tablero[9][fila];
+	    if (torreCorta && torreCorta->getTipo() == tipo::TORRE && torreCorta->getColor() == this->color && !torreCorta->getMovida()) {
+	        if (tablero[8][fila] == nullptr && tablero[7][fila] == nullptr) {
+	            movs.push_back(Vector2D(posicion.x + 3, fila)); 
+	        }
+	    }
+	
+	    // Enroque largo 
+	    Pieza* torreLarga = tablero[0][fila];
+	    if (torreLarga && torreLarga->getTipo() == tipo::TORRE && torreLarga->getColor() == this->color && !torreLarga->getMovida()) {
+	        if (tablero[1][fila] == nullptr && tablero[2][fila] == nullptr && tablero[3][fila] == nullptr) {
+	            movs.push_back(Vector2D(posicion.x - 3, fila)); 
+	        }
+	    }
+	}
+	
 	// FILTRO PARA MOVIMIENTO DIAGONAL DEL PEÓN 
 	if (pieza->getTipo() == tipo::PEON) {
 		// Si el movimiento es en diagonal
