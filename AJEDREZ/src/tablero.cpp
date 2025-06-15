@@ -35,7 +35,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	if (pieza->getColor() != turno) return false;
 	
 	// No poder comer a un rey
-	if (destinoPieza->getTipo() == tipo::REY) return false;
+	if (destinoPieza && destinoPieza->getTipo() == tipo::REY) return false;
 	
 	// Movimientos posibles de cada pieza
 	bool valido = false;
