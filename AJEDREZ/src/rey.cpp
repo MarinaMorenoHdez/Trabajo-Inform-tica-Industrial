@@ -17,6 +17,28 @@ std::vector<Vector2D> Rey::movimientosPosibles(Pieza* tablero[10][8])
             movs.push_back(Vector2D(x, y));
         }
     }
+
+// Enroque salta una fila de más que el normal, falta que se mueva la torre y comprobar que no hay jaque, eso en tablero
+if (!this->getMovida()) {
+    int fila = posicion.y;
+
+    // Enroque corto 
+    Pieza* torreCorta = tablero[9][fila];
+    if (torreCorta && torreCorta->getTipo() == tipo::TORRE && torreCorta->getColor() == this->color && !torreCorta->getMovida()) {
+        if (tablero[8][fila] == nullptr && tablero[7][fila] == nullptr) {
+            movs.push_back(Vector2D(posicion.x + 3, fila)); 
+        }
+    }
+
+    // Enroque largo 
+    Pieza* torreLarga = tablero[0][fila];
+    if (torreLarga && torreLarga->getTipo() == tipo::TORRE && torreLarga->getColor() == this->color && !torreLarga->getMovida()) {
+        if (tablero[1][fila] == nullptr && tablero[2][fila] == nullptr && tablero[3][fila] == nullptr) {
+            movs.push_back(Vector2D(posicion.x - 3, fila)); 
+        }
+    }
+}
+    
     return movs;
 }
 void Rey::dibuja() {
