@@ -42,4 +42,5 @@ public:
 	bool isPartidaFinalizada() const { return partidaFinalizada; }
 	std::vector<Movimiento> generarTodosMovimientos(bool soloCapturas = false);  
 	std::vector<Vector2D> getMovimientosLegales(Vector2D origen);  
+	void setPiezaEn(Vector2D pos, Pieza* p);
 };
