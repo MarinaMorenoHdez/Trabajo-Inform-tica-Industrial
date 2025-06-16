@@ -3,6 +3,8 @@
 #include "freeglut.h"
 #include <ETSIDI.h>
 #include "control.h"
+#include <algorithm>
+
 
 
 using namespace std;
@@ -22,24 +24,24 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 
 	Pieza* pieza = tablero[origen.x][origen.y];
 	Pieza* destinoPieza = tablero[destino.x][destino.y];
-	
+
 	// No hay pieza en la posición de origen
 	if (!pieza) return false;
+
 	// Limites tablero (origen y destino)
-	if (origen.x < 0 || origen.x >= 10 || origen.y < 0 || origen.y >= 8)
-		return false;
-	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8)
-		return false;
-	
+	if (origen.x < 0 || origen.x >= 10 || origen.y < 0 || origen.y >= 8) return false;
+	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8) return false;
+
 	//comprobar turno 
 	if (pieza->getColor() != turno) return false;
-	
-	// No poder comer a un rey
+
+	// No comerte a tu rey
 	if (destinoPieza && destinoPieza->getTipo() == tipo::REY) return false;
-	
+
+
 	// Movimientos posibles de cada pieza
 	bool valido = false;
-	std::vector<Vector2D> movs = pieza->movimientosPosibles(tablero);
+	std::vector<Vector2D> movs = pieza->movimientosPosibles(tablero,this);
 	for (const auto& ref : movs) {
 		if (ref.x == destino.x && ref.y == destino.y) {
 			valido = true;
@@ -48,72 +50,38 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	}
 	if (!valido) return false;
 
-	// Enroque 
-	if (!this->getMovida()) {
-	    int fila = posicion.y;
-	
-	    // Enroque corto 
-	    Pieza* torreCorta = tablero[9][fila];
-	    if (torreCorta && torreCorta->getTipo() == tipo::TORRE && torreCorta->getColor() == this->color && !torreCorta->getMovida()) {
-	        if (tablero[8][fila] == nullptr && tablero[7][fila] == nullptr) {
-	            movs.push_back(Vector2D(posicion.x + 3, fila)); 
-	        }
-	    }
-	
-	    // Enroque largo 
-	    Pieza* torreLarga = tablero[0][fila];
-	    if (torreLarga && torreLarga->getTipo() == tipo::TORRE && torreLarga->getColor() == this->color && !torreLarga->getMovida()) {
-	        if (tablero[1][fila] == nullptr && tablero[2][fila] == nullptr && tablero[3][fila] == nullptr) {
-	            movs.push_back(Vector2D(posicion.x - 3, fila)); 
-	        }
-	    }
-	}
-
-	// Coronar
-if (pieza->getTipo() == tipo::PEON) {
-	int filaFinal = (pieza->getColor() == 'B') ? 7 : 0;
-	if (destino.y == filaFinal) {
-		char eleccion;
-		std::cout << "Promociona el peón a:\n";
-		std::cout << "(R) Reina\n(T) Torre\n(A) Alfil\n(C) Caballo\n(N) Canciller\n(Z) Arzobispo\n";
-		std::cout << "Elige una opción (letra): ";
-		std::cin >> eleccion;
-
-		Pieza* nueva = nullptr;
-		switch (toupper(eleccion)) { // minúsculas
-		case 'T':
-			nueva = new Torre(destino.x, destino.y, pieza->getColor());
-			break;
-		case 'A':
-			nueva = new Alfil(destino.x, destino.y, pieza->getColor());
-			break;
-		case 'C':
-			nueva = new Caballo(destino.x, destino.y, pieza->getColor());
-			break;
-		case 'N':
-			nueva = new Canciller(destino.x, destino.y, pieza->getColor());
-			break;
-		case 'Z':
-			nueva = new Arzobispo(destino.x, destino.y, pieza->getColor());
-			break;
-		case 'R':
-		default:
-			nueva = new Reina(destino.x, destino.y, pieza->getColor());
-			break;
+	// Enroque
+	if (pieza->getTipo() == tipo::REY && abs(destino.x - origen.x) == 3) {
+		int fila = origen.y;
+		if (destino.x > origen.x) { // Enroque corto (derecha)
+			Pieza* torre = tablero[9][fila];
+			if (torre) {
+				tablero[destino.x - 1][fila] = torre; // Torre izq del rey
+				tablero[9][fila] = nullptr;
+				torre->mueve(Vector2D(destino.x - 1, fila));
+			}
 		}
-
-		// Reemplazar en el tablero
-		tablero[destino.x][destino.y] = nueva;
-
-		// Eliminar del vector y borrar el peón
-		auto it = std::find(piezas.begin(), piezas.end(), pieza);
-		if (it != piezas.end()) piezas.erase(it);
-		delete pieza;
-
-		piezas.push_back(nueva);
+		else { // Enroque largo (izquierda)
+			Pieza* torre = tablero[0][fila];
+			if (torre) {
+				tablero[destino.x + 1][fila] = torre; // Torre dcha del rey
+				tablero[0][fila] = nullptr;
+				torre->mueve(Vector2D(destino.x + 1, fila));
+			}
+		}
 	}
-}
-	
+
+	// Coronar (solo marcamos que se necesita promoción)
+	if (pieza->getTipo() == tipo::PEON) {
+		int filaFinal = (pieza->getColor() == 'B') ? 7 : 0;
+		if (destino.y == filaFinal) {
+			peonParaPromocion = destino;
+			promocionPendiente = true;
+			return true;  // Se completará en el control
+		}
+	}
+
+
 	// FILTRO PARA MOVIMIENTO DIAGONAL DEL PEÓN 
 	if (pieza->getTipo() == tipo::PEON) {
 		// Si el movimiento es en diagonal
@@ -124,9 +92,7 @@ if (pieza->getTipo() == tipo::PEON) {
 			}
 		}
 	}
-	
 	// Simulación del movimiento para ver si se deja al propio rey en jaque 
-	Pieza* destinoPieza = tablero[destino.x][destino.y]; // ver si hay una pieza en la casilla destino
 	Vector2D origenOriginal = pieza->getPosicion();
 
 	// --- ELIMINAR TEMPORALMENTE LA PIEZA CAPTURADA DEL VECTOR piezas ---
@@ -157,13 +123,13 @@ if (pieza->getTipo() == tipo::PEON) {
 		std::cout << "Movimiento no permitido, El rey sigue en jaque\n";
 		return false;
 	}
-	
+
 	//movimiento real
 	if (destinoPieza != nullptr) { //comprobar si hay pieza para comer
-	// Eliminar del vector de piezas
-	auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
-	if (it != piezas.end()) piezas.erase(it);
-	delete destinoPieza;
+		// Eliminar del vector de piezas
+		auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
+		if (it != piezas.end()) piezas.erase(it);
+		delete destinoPieza;
 	}
 
 	tablero[destino.x][destino.y] = pieza;
@@ -178,7 +144,6 @@ if (pieza->getTipo() == tipo::PEON) {
 		if (JaqueMate(enemigo)) {
 			std::cout << "¡Jaque mate! Gana el jugador " << turno << std::endl;
 			partidaFinalizada = true; // Partida finalizada
-			// Aquí puedes gestionar el final de la partida si lo deseas
 			if (refControl != nullptr) {
 				if (turno == 'B')  // Gana blanco (ROJO)
 					refControl->Set_Estado(GANAROJO);
@@ -187,8 +152,54 @@ if (pieza->getTipo() == tipo::PEON) {
 			}
 		}
 	}
+	if (pieza->getTipo() == tipo::PEON) {
+		int filaFinal = (pieza->getColor() == 'B') ? 7 : 0;
+		if (destino.y == filaFinal) {
+			char eleccion;
+			std::cout << "Promociona el peón a:\n";
+			std::cout << "(R) Reina\n(T) Torre\n(A) Alfil\n(C) Caballo\n(N) Canciller\n(Z) Arzobispo\n";
+			std::cout << "Elige una opción (letra): ";
+			std::cin >> eleccion;
+
+			Pieza* nueva = nullptr;
+			switch (toupper(eleccion)) { // minúsculas
+			case 'T':
+				nueva = new Torre(destino.x, destino.y, pieza->getColor());
+				break;
+			case 'A':
+				nueva = new Alfil(destino.x, destino.y, pieza->getColor());
+				break;
+			case 'C':
+				nueva = new Caballo(destino.x, destino.y, pieza->getColor());
+				break;
+			case 'N':
+				nueva = new Canciller(destino.x, destino.y, pieza->getColor());
+				break;
+			case 'Z':
+				nueva = new Arzobispo(destino.x, destino.y, pieza->getColor());
+				break;
+			case 'R':
+			default:
+				nueva = new Reina(destino.x, destino.y, pieza->getColor());
+				break;
+			}
+
+			// Reemplazar en el tablero
+			tablero[destino.x][destino.y] = nueva;
+
+			// Eliminar del vector y borrar el peón
+			auto it = std::find(piezas.begin(), piezas.end(), pieza);
+			if (it != piezas.end()) piezas.erase(it);
+			delete pieza;
+
+			piezas.push_back(nueva);
+		}
+	}
 	cambiarTurno();
 	return true;
+}
+void cambioPeon() {
+
 }
 
 Tablero::~Tablero() {
@@ -198,6 +209,7 @@ Tablero::~Tablero() {
 	piezas.clear();
 }
 
+
 void Tablero::cambiarTurno() {
 	turno = (turno == 'B') ? 'N' : 'B';
 }
@@ -205,7 +217,7 @@ void Tablero::dibuja() {
 	// DIBUJAR FONDO PRIMERO
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/tablero.png").id);
+	glBindTexture(GL_TEXTURE_2D, ETSIDI::getTexture("imagenes/tableroconmenu.png").id);
 
 	glBegin(GL_POLYGON);
 	glColor3f(1, 1, 1);
@@ -316,14 +328,24 @@ if (refControl && refControl->haySeleccion()) {
 		}
 
 	}
-
-	
-	}
+}
 
 
 
 
 void Tablero::inicializar(){
+	for (auto pieza : piezas) {
+		delete pieza;
+	}
+	piezas.clear();
+
+	// Limpia el array del tablero
+	for (int i = 0; i < 10; ++i)
+		for (int j = 0; j < 8; ++j)
+			tablero[i][j] = nullptr;
+
+	turno = 'B';
+	partidaFinalizada = false;
 	// Peones blancos
 	Pieza* peonBlanco1 = new Peon(0, 1, 'B');
 	piezas.push_back(peonBlanco1); tablero[0][1] = peonBlanco1;
@@ -485,6 +507,7 @@ bool Tablero::Jaque(char color)
 		if (p->getColor() == color && p->getTipo() == tipo::REY) {
 			posicionRey = p->getPosicion();
 			reyEncontrado = true;
+			std::cout << "[DEBUG] Rey de color " << color << " encontrado en (" << posicionRey.x << "," << posicionRey.y << ")\n";
 			break;
 		}
 	}
@@ -494,10 +517,12 @@ bool Tablero::Jaque(char color)
 	// Comprobar si alguna pieza enemiga puede atacarlo
 	for (Pieza* p : piezas) {
 		if (p->getColor() != color) {
-			std::vector<Vector2D> movs = p->movimientosPosibles(tablero);
+			std::vector<Vector2D> movs = p->movimientosPosibles(tablero,this);
 			for (const Vector2D& m : movs) {
 				if (m.x == posicionRey.x && m.y == posicionRey.y) {
+					std::cout << "[DEBUG] Jaque detectado al rey en (" << m.x << "," << m.y << ") por pieza enemiga\n";
 					return true; // Jaque detectado
+
 				}
 			}
 		}
@@ -508,48 +533,12 @@ bool Tablero::Jaque(char color)
 
 
 
-bool Tablero::JaqueMate(char color) {
-		if (!Jaque(color)) return false; // Si no está en jaque, no es jaque mate
-
-		// Para cada pieza del color del turno
-		for (Pieza* p : piezas) {
-			if (p->getColor() == color) {
-				std::vector<Vector2D> movs = p->movimientosPosibles(tablero);
-				Vector2D origen = p->getPosicion();
-
-				for (const Vector2D& destino : movs) {
-					// Simular el movimiento
-					Pieza* destinoPieza = tablero[destino.x][destino.y];
-					tablero[origen.x][origen.y] = nullptr;
-					tablero[destino.x][destino.y] = p;
-					p->mueve(destino);
-
-					bool sigueEnJaque = Jaque(color);
-
-					// Revertir simulación
-					p->mueve(origen);
-					tablero[origen.x][origen.y] = p;
-					tablero[destino.x][destino.y] = destinoPieza;
-
-					if (!sigueEnJaque)
-						return false; // Hay al menos un movimiento que evita el jaque mate
-				}
-			}
-		}
-		// Si ningún movimiento evita el jaque, es jaque mate
-		return true;
-}
-void Tablero::setPiezaEn(Vector2D pos, Pieza* p) 
-{
-	tablero[pos.x][pos.y] = p;
-}
-
 
 std::vector<Vector2D> Tablero::getMovimientosLegales(Vector2D origen) {
 	Pieza* p = getPiezaEn(origen);
 	if (!p) return {};
 
-	std::vector<Vector2D> movs = p->movimientosPosibles(tablero);
+	std::vector<Vector2D> movs = p->movimientosPosibles(tablero,this);
 	std::vector<Vector2D> legales;
 
 	if (p->getTipo() == tipo::PEON) {
@@ -583,7 +572,6 @@ std::vector<Vector2D> Tablero::getMovimientosLegales(Vector2D origen) {
 }
 
 
-
 std::vector<Movimiento> Tablero::generarTodosMovimientos(bool soloCapturas) {
 	std::vector<Movimiento> lista;
 
@@ -592,7 +580,7 @@ std::vector<Movimiento> Tablero::generarTodosMovimientos(bool soloCapturas) {
 			Pieza* p = tablero[x][y];
 			if (p && p->getColor() == turno) {
 				Vector2D origen = { x, y };
-				std::vector<Vector2D> posibles = p->movimientosPosibles(tablero);
+				std::vector<Vector2D> posibles = p->movimientosPosibles(tablero,this);
 
 				for (const Vector2D& destino : posibles) {
 					Pieza* piezaDestino = tablero[destino.x][destino.y];
@@ -625,12 +613,49 @@ std::vector<Movimiento> Tablero::generarTodosMovimientos(bool soloCapturas) {
 
 	return lista;
 }
+
+bool Tablero::JaqueMate(char color) {
+	if (!Jaque(color)) return false; // Si no está en jaque, no es jaque mate
+
+	// Para cada pieza del color del turno
+	for (Pieza* p : piezas) {
+		if (p->getColor() == color) {
+			std::vector<Vector2D> movs = p->movimientosPosibles(tablero,this);
+			Vector2D origen = p->getPosicion();
+
+			for (const Vector2D& destino : movs) {
+				// Simular el movimiento
+				Pieza* destinoPieza = tablero[destino.x][destino.y];
+				tablero[origen.x][origen.y] = nullptr;
+				tablero[destino.x][destino.y] = p;
+				p->mueve(destino);
+
+				bool sigueEnJaque = Jaque(color);
+
+				// Revertir simulación
+				p->mueve(origen);
+				tablero[origen.x][origen.y] = p;
+				tablero[destino.x][destino.y] = destinoPieza;
+
+				if (!sigueEnJaque)
+					return false; // Hay al menos un movimiento que evita el jaque mate
+			}
+		}
+	}
+	// Si ningún movimiento evita el jaque, es jaque mate
+	return true;
+}
+
+
 void Tablero::borrar() {
+	// Eliminar todas las piezas del vector
 	for (Pieza* pieza : piezas) {
-		delete pieza; 
+		delete pieza;  // liberar memoria
 	}
 
-	piezas.clear(); 
+	piezas.clear(); // vaciar el vector
+
+	// Establecer todas las casillas del tablero a nullptr
 	for (int i = 0; i < 10; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			tablero[i][j] = nullptr;
@@ -638,5 +663,39 @@ void Tablero::borrar() {
 	}
 }
 
+bool Tablero::casillaAmenazada(Pieza* tablero[10][8], Vector2D casilla, char color) {
+	for (Pieza* p : piezas) {
+		if (p && p->getColor() != color) {
+			std::vector<Vector2D> movs = p->movimientosPosibles(tablero,this);
+			for (const Vector2D& m : movs) {
+				if (m.x == casilla.x && m.y == casilla.y)
+					return true;
+			}
+		}
+	}
+	return false;
+}
 
+
+
+void Tablero::setPiezaEn(Vector2D pos, Pieza* p) {
+	tablero[pos.x][pos.y] = p;
+	if (p) {
+		p->setPosicion(pos.x, pos.y);
+	}
+}
+
+
+void Tablero::reemplazarPeonPromocionado(Pieza* nueva) {
+	Pieza* peon = getPiezaEn(peonParaPromocion);
+	if (peon) {
+		auto it = std::find(piezas.begin(), piezas.end(), peon);
+		if (it != piezas.end()) piezas.erase(it);
+		delete peon;
+	}
+
+	tablero[peonParaPromocion.x][peonParaPromocion.y] = nueva;
+	piezas.push_back(nueva);
+	promocionPendiente = false;
+}
 
