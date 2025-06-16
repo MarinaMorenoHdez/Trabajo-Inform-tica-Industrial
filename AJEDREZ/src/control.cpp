@@ -3,7 +3,8 @@
 #include "freeglut.h" 
 #include <ETSIDI.h>
 #include "mundo.h"      
-#include "tablero.h"    
+#include "tablero.h"  
+#include "pieza.h"
 
 
 void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo, bool TeclaSp, bool TeclaCtr) {
@@ -17,7 +18,7 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 
     std::cout << "Click en coords mundo: x=" << x_mundo << ", y=" << y_mundo << std::endl;
 
-    switch (estado) 
+    switch (estado)
     {
     case INICIO:
         if (x_mundo >= 10 && x_mundo <= 30 && y_mundo >= 3 && y_mundo <= 10) {
@@ -26,124 +27,185 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
         break;
 
     case START:
-        // Botón 1 vs 1
-        if (x_mundo >= 15 && x_mundo <= 45 && y_mundo >= 20 && y_mundo <= 28) {
+        if (x_mundo >= 8 && x_mundo <= 23 && y_mundo >= 18 && y_mundo <= 21) {
             estado = V1x1MENU;
             std::cout << "Cambio a V1x1MENU\n";
         }
-        // Botón 1 vs MÁQUINA
-        else if (x_mundo >= 15 && x_mundo <= 45 && y_mundo >= 10 && y_mundo <= 18) {
+        else if (x_mundo >= 8 && x_mundo <= 23 && y_mundo >= 10 && y_mundo <= 18) {
             estado = VxMMENU;
             std::cout << "Cambio a VxMMENU\n";
         }
         break;
 
-
     case V1x1MENU:
-        // Botón EMPEZAR JUEGO
-        if (x_mundo >= 15 && x_mundo <= 45 && y_mundo >= 20 && y_mundo <= 28) {
+        if (x_mundo >= 8 && x_mundo <= 23 && y_mundo >= 18 && y_mundo <= 21) {
             mundo.inicializa(0, 0);
             estado = RATON;
             std::cout << "Cambio a estado RATON (1vs1)\n";
         }
-        // Botón INSTRUCCIONES
-        else if (x_mundo >= 15 && x_mundo <= 45 && y_mundo >= 10 && y_mundo <= 18) {
+        else if (x_mundo >= 8 && x_mundo <= 23 && y_mundo >= 10 && y_mundo <= 18) {
             estado = V1x1_INSTR;
             std::cout << "Cambio a estado V1x1_INSTR\n";
         }
         break;
 
-
     case V1x1_INSTR:
         if (x_mundo >= 13 && x_mundo <= 18 && y_mundo >= 0.5 && y_mundo <= 1.2) {
-            mundo.inicializa(0, 0);  // Juego 1vs1
+            mundo.inicializa(0, 0);
             estado = RATON;
             std::cout << "JUGAR desde instrucciones 1vs1\n";
         }
         break;
 
-
     case VxMMENU:
-        // Botón "EMPEZAR JUEGO"
         if (x_mundo >= 15 && x_mundo <= 45 && y_mundo >= 20 && y_mundo <= 28) {
             mundo.inicializa(0, 1);
             estado = RATON;
             std::cout << "Cambio a estado RATON (vs máquina)\n";
         }
-        // Botón "INSTRUCCIONES"
         else if (x_mundo >= 15 && x_mundo <= 45 && y_mundo >= 10 && y_mundo <= 18) {
             estado = VxM_INSTR;
             std::cout << "Cambio a estado VxM_INSTR\n";
         }
         break;
 
-
     case VxM_INSTR:
         if (x_mundo >= 13 && x_mundo <= 18 && y_mundo >= 0.5 && y_mundo <= 1.2) {
-            mundo.inicializa(0, 1);  // Juego vs máquina
+            mundo.inicializa(0, 1);
             estado = RATON;
             std::cout << "JUGAR desde instrucciones vs máquina\n";
         }
         break;
 
-
     case RATON:
-        if (x_mundo >= 13 && x_mundo <= 18 && y_mundo >= 0.3 && y_mundo <= 1.3) {
+        if (x_mundo >= 6 && x_mundo <= 27 && y_mundo >= 0.3 && y_mundo <= 2.5) {
             estado = JUEGO;
             std::cout << "Cambio a estado JUEGO desde pantalla RATON (instrucciones)\n";
         }
         break;
 
-
     case JUEGO:
     case JUEGO_1VS1:
-    {
         if (boton == GLUT_LEFT_BUTTON && abajo) {
             Vector2D coord = mouseToBoardCoords(x, y);
             gestionarMovimientoJugador(coord);
         }
+        if (x_mundo >= 36 && x_mundo <= 43 && y_mundo >= -3 && y_mundo <= 1) {
+            estado = MENUPAUSA;
+        }
+        break;
+
+    case MENUPAUSA:
+        if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 27 && y_mundo <= 30) {
+            estado = JUEGO;
+        }
+        if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 20 && y_mundo <= 24) {
+            mundo.borrar();
+            mundo.inicializa(0, 1);
+            mundo.dibuja();
+            estado = JUEGO;
+        }
+        if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 7 && y_mundo <= 11) {
+            mundo.borrar();
+            mundo.inicializa(0, 1);
+            mundo.dibuja();
+            estado = START;
+        }
+        if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 0.5 && y_mundo <= 4) {
+            exit(0);
+        }
+        break;
+    case PEONFINALAZUL:
+    {
+        Vector2D pos = mundo.getTablero().getPeonParaPromocion();
+        char color = 'B';
+        Pieza* nueva = nullptr;
+
+        if (x_mundo >= -10 && x_mundo <= 0 && y_mundo >= 24 && y_mundo <= 34)
+            nueva = new Alfil(pos.x, pos.y, color);
+        else if (x_mundo >= 5 && x_mundo <= 15 && y_mundo >= 24 && y_mundo <= 34)
+            nueva = new Arzobispo(pos.x, pos.y, color);
+        else if (x_mundo >= 20 && x_mundo <= 30 && y_mundo >= 24 && y_mundo <= 34)
+            nueva = new Caballo(pos.x, pos.y, color);
+        else if (x_mundo >= -10 && x_mundo <= 0 && y_mundo >= 10 && y_mundo <= 20)
+            nueva = new Canciller(pos.x, pos.y, color);
+        else if (x_mundo >= 5 && x_mundo <= 15 && y_mundo >= 10 && y_mundo <= 20)
+            nueva = new Reina(pos.x, pos.y, color);
+        else if (x_mundo >= 20 && x_mundo <= 30 && y_mundo >= 10 && y_mundo <= 20)
+            nueva = new Torre(pos.x, pos.y, color);
+
+        if (nueva) {
+            mundo.getTablero().reemplazarPeonPromocionado(nueva);
+            mundo.getTablero().cancelarPromocion();
+            estado = JUEGO;
+        }
         break;
     }
-         case GANAROJO:
+
+
+    case PEONFINALROJO:
     {
+
+        std::cout << "Click: x = " << x_mundo << ", y = " << y_mundo << std::endl;
+
+        Vector2D pos = mundo.getTablero().getPeonParaPromocion();
+        char color = 'N';
+
+        Pieza* nueva = nullptr;
+
+        if (x_mundo >= 1 && x_mundo <= 10 && y_mundo >= 28 && y_mundo <= 38)
+            nueva = new Alfil(pos.x, pos.y, color);
+        else if (x_mundo >= 19 && x_mundo <= 28 && y_mundo >= 28 && y_mundo <= 38)
+            nueva = new Arzobispo(pos.x, pos.y, color);
+        else if (x_mundo >= 36 && x_mundo <= 45 && y_mundo >= 28 && y_mundo <= 38)
+            nueva = new Caballo(pos.x, pos.y, color);
+        else if (x_mundo >= 1 && x_mundo <= 10 && y_mundo >= 12 && y_mundo <= 22)
+            nueva = new Canciller(pos.x, pos.y, color);
+        else if (x_mundo >= 19 && x_mundo <= 28 && y_mundo >= 12 && y_mundo <= 22)
+            nueva = new Reina(pos.x, pos.y, color);
+        else if (x_mundo >= 36 && x_mundo <= 45 && y_mundo >= 12 && y_mundo <= 22)
+            nueva = new Torre(pos.x, pos.y, color);
+
+        if (nueva) {
+            mundo.getTablero().reemplazarPeonPromocionado(nueva);
+            mundo.getTablero().cancelarPromocion();
+            estado = JUEGO;
+        }
+        break;
+    }
+
+
+    case GANAROJO:
         if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
-            
-           mundo.borrar();
-            mundo.inicializa(0, 1);    
-            mundo.dibuja();            
+            mundo.borrar();
+            mundo.inicializa(0, 1);
+            mundo.dibuja();
             estado = JUEGO;
             std::cout << "Reinicio\n";
         }
         if (x_mundo >= 34 && x_mundo <= 44 && y_mundo >= -2 && y_mundo <= 1) {
             exit(0);
         }
-
         break;
-    }
+
     case GANAAZUL:
-    {
         if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
-           mundo.borrar();
-            mundo.inicializa(0, 1);    
-            mundo.dibuja();            
+            mundo.borrar();
+            mundo.inicializa(0, 1);
+            tablero.dibuja();
             estado = JUEGO;
             std::cout << "Reinicio\n";
         }
         if (x_mundo >= 34 && x_mundo <= 44 && y_mundo >= -2 && y_mundo <= 1) {
             exit(0);
         }
-
-
         break;
-    }
+
     case TABLAS:
-    {
         break;
     }
-    }
-    }
-    
 }
+
 
 void control::dibuja() {
     gluLookAt(15, 18, 60, 15, 18, 0, 0.0, 1.0, 0.0);
@@ -160,6 +222,9 @@ void control::dibuja() {
     case JUEGO:
         mundo.dibuja();
         return;
+    case MENUPAUSA:texId = ETSIDI::getTexture("imagenes/menupausa.png").id; break;
+    case PEONFINALAZUL:texId = ETSIDI::getTexture("imagenes/peonfinalrojo.png").id; break;
+    case PEONFINALROJO:texId = ETSIDI::getTexture("imagenes/peonfinalazul.png").id; break;
     case GANAROJO: texId = ETSIDI::getTexture("imagenes/rojoganador.png").id; break;
     case GANAAZUL: texId = ETSIDI::getTexture("imagenes/azulganador.png").id; break;
     case TABLAS: texId = ETSIDI::getTexture("imagenes/tablas.png").id; break;
@@ -189,40 +254,7 @@ void control::tecla(unsigned char key) {
 
 
 
-void control::gestionarMovimientoJugador(Vector2D coord) {
-    if (mundo.getTablero().isPartidaFinalizada()) {
-        std::cout << "¡Jaque Mate! La partida ha terminado.\n";
-        return;
-    }
 
-    Pieza* p = mundo.getTablero().getPiezaEn(coord);
-
-    if (!piezaSeleccionada) {
-        if (p && p->getColor() == mundo.getTablero().getTurno()) {
-            piezaSeleccionada = true;
-            casillaSeleccionada = coord;
-            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);
-        }
-    }
-    else {
-        if (mundo.getTablero().moverPieza(casillaSeleccionada, coord)) {
-            limpiarSeleccion();
-
-          //IA
-            if (mundo.get_oponente() == 1 && !mundo.getTablero().isPartidaFinalizada()) {
-                char turno_ia = mundo.getTablero().getTurno();  // Turno ahora le toca a la IA
-                Movimiento mejor = ia.calcularMejorMovimiento(mundo.getTablero(), turno_ia);
-                if (mejor.origen.x != -1) {
-                    mundo.getTablero().moverPieza(mejor.origen, mejor.destino);
-                }
-            }
-        }
-        else {
-            piezaSeleccionada = false;
-            casillasPosibles.clear();
-        }
-    }
-}
 
 
 Vector2D control::mouseToBoardCoords(int x, int y) {
@@ -245,4 +277,45 @@ Vector2D control::mouseToBoardCoords(int x, int y) {
 //CONSTRUCTOR
 control::control() {
     mundo.setControl(this);  
+}
+
+
+void control::gestionarMovimientoJugador(Vector2D coord) {
+    if (mundo.getTablero().isPartidaFinalizada()) {
+        std::cout << "¡Jaque Mate! La partida ha terminado.\n";
+        return;
+    }
+
+    Pieza* p = mundo.getTablero().getPiezaEn(coord);
+
+    if (!piezaSeleccionada) {
+        if (p && p->getColor() == mundo.getTablero().getTurno()) {
+            piezaSeleccionada = true;
+            casillaSeleccionada = coord;
+            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);
+        }
+    }
+    else {
+        if (mundo.getTablero().moverPieza(casillaSeleccionada, coord)) {
+            limpiarSeleccion();
+
+          
+            if (mundo.getTablero().hayPromocionPendiente()) {
+                estado = (mundo.getTurno() == 'N') ? PEONFINALROJO : PEONFINALAZUL;
+                return;
+            }
+
+            // Si juegas contra la IA, actúa ahora
+            if (mundo.get_oponente() == 1) {
+                Movimiento mejor = ia.calcularMejorMovimiento(mundo.getTablero(), mundo.getTablero().getTurno());
+                if (mejor.origen.x != -1) {
+                    mundo.getTablero().moverPieza(mejor.origen, mejor.destino);
+                }
+            }
+        }
+        else {
+            piezaSeleccionada = false;
+            casillasPosibles.clear();
+        }
+    }
 }
