@@ -68,6 +68,51 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	        }
 	    }
 	}
+
+	// Coronar
+if (pieza->getTipo() == tipo::PEON) {
+	int filaFinal = (pieza->getColor() == 'B') ? 7 : 0;
+	if (destino.y == filaFinal) {
+		char eleccion;
+		std::cout << "Promociona el peón a:\n";
+		std::cout << "(R) Reina\n(T) Torre\n(A) Alfil\n(C) Caballo\n(N) Canciller\n(Z) Arzobispo\n";
+		std::cout << "Elige una opción (letra): ";
+		std::cin >> eleccion;
+
+		Pieza* nueva = nullptr;
+		switch (toupper(eleccion)) { // minúsculas
+		case 'T':
+			nueva = new Torre(destino.x, destino.y, pieza->getColor());
+			break;
+		case 'A':
+			nueva = new Alfil(destino.x, destino.y, pieza->getColor());
+			break;
+		case 'C':
+			nueva = new Caballo(destino.x, destino.y, pieza->getColor());
+			break;
+		case 'N':
+			nueva = new Canciller(destino.x, destino.y, pieza->getColor());
+			break;
+		case 'Z':
+			nueva = new Arzobispo(destino.x, destino.y, pieza->getColor());
+			break;
+		case 'R':
+		default:
+			nueva = new Reina(destino.x, destino.y, pieza->getColor());
+			break;
+		}
+
+		// Reemplazar en el tablero
+		tablero[destino.x][destino.y] = nueva;
+
+		// Eliminar del vector y borrar el peón
+		auto it = std::find(piezas.begin(), piezas.end(), pieza);
+		if (it != piezas.end()) piezas.erase(it);
+		delete pieza;
+
+		piezas.push_back(nueva);
+	}
+}
 	
 	// FILTRO PARA MOVIMIENTO DIAGONAL DEL PEÓN 
 	if (pieza->getTipo() == tipo::PEON) {
