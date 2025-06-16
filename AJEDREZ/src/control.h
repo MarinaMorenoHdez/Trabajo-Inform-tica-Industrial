@@ -3,6 +3,7 @@
 #include <ETSIDI.h>
 #include "tablero.h"
 #include "mundo.h"
+#include "ia.h"
 
 
 
@@ -11,13 +12,15 @@ enum
 	JUEGO = 0, INICIO, START,
 	V1x1MENU, V1x1_INSTR,
 	VxMMENU, VxM_INSTR,
-	RATON, JUEGO_1VS1,GANAAZUL,GANAROJO,TABLAS
+	RATON, JUEGO_1VS1,MENUPAUSA,PEONFINALROJO, PEONFINALAZUL, GANAROJO,GANAAZUL,TABLAS
 };
 
 class control {
 
 	int estado = 1;
 	Mundo mundo;
+	Tablero tablero;
+	IA ia;
 
 
 private:
@@ -26,6 +29,7 @@ private:
 	Vector2D seleccion;
 	void gestionarMovimientoJugador(Vector2D coord);
 	std::vector<Vector2D> casillasPosibles;
+
 
 public:
 	void tecla(unsigned char key);
@@ -39,7 +43,6 @@ public:
 	bool haySeleccion() const { return piezaSeleccionada; }
 	const std::vector<Vector2D>& getCasillasPosibles() const { return casillasPosibles; }
 	void limpiarSeleccion() { piezaSeleccionada = false; casillasPosibles.clear(); }
-
 
 	control();
 
