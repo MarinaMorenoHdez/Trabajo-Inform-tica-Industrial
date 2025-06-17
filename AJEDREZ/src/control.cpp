@@ -153,6 +153,8 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
         if (nueva) {
             mundo.getTablero().reemplazarPeonPromocionado(nueva);
             mundo.getTablero().cancelarPromocion();
+            mundo.getTablero().cambiarTurno();
+            limpiarSeleccion();
             estado = JUEGO;
         }
         break;
@@ -186,6 +188,8 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             mundo.getTablero().reemplazarPeonPromocionado(nueva);
             mundo.getTablero().cancelarPromocion();
             estado = JUEGO;
+            mundo.getTablero().cambiarTurno();
+            limpiarSeleccion();
         }
         break;
     }
