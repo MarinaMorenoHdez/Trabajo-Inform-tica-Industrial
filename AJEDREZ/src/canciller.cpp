@@ -4,7 +4,7 @@
 #include <string>
 
 // Torre y Caballo
-std::vector<Vector2D> Canciller::movimientosPosibles(Pieza* tablero[10][8])
+std::vector<Vector2D> Canciller::movimientosPosibles(Pieza* tablero[10][8],Tablero* /*refTablero*/)
 {
     std::vector<Vector2D> movs;
 
