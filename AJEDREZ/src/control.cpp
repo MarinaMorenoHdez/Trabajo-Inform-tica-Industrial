@@ -336,11 +336,20 @@ void control::gestionarMovimientoJugador(Vector2D coord) {
                 return;
             }
             //empate por falta de piezas
-        if (mundo.getTablero().empate()) {
+            if (mundo.getTablero().empate()) {
             std::cout << "¡Empate por falta de piezas!" << std::endl;
             mundo.getTablero().setPartidaFinalizada(true); // Si tienes este método
             estado = TABLAS; // Cambia el estado para mostrar el empate
-        }
+            }
+            //empate por rey ahogado
+            char turnoActual = mundo.getTablero().getTurno();
+            char rival = (turnoActual == 'B') ? 'N' : 'B';
+            if (mundo.getTablero().ahogado(rival)) {
+                std::cout << "¡Empate por rey ahogado!" << std::endl;
+                mundo.getTablero().setPartidaFinalizada(true);
+                estado = TABLAS;
+                return;
+            }           
 
             // Si juegas contra la IA, actúa ahora
             if (mundo.get_oponente() == 1) {
