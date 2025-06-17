@@ -655,4 +655,22 @@ void Tablero::reemplazarPeonPromocionado(Pieza* nueva) {
 	promocionPendiente = false;
 }
 
+bool Tablero::empate() {
+	int numPiezas = 0;
+	int numAlfiles = 0;
+	int numCaballos = 0;
+
+	for (Pieza* p : piezas) {
+		if (p->getTipo() == tipo::REY) continue;
+		++numPiezas;
+		if (p->getTipo() == tipo::ALFIL) ++numAlfiles;
+		if (p->getTipo() == tipo::CABALLO) ++numCaballos;
+	}
+	// Solo reyes
+	if (numPiezas == 0) return true;
+	// Rey y un alfil o rey y un caballo
+	if (numPiezas == 1 && (numAlfiles == 1 || numCaballos == 1)) return true;
+	// Rey y dos alfiles del mismo color (esto requiere más lógica si quieres ser estricto)
+	return false;
+}
 
