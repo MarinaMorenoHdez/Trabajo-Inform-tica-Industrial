@@ -3,7 +3,7 @@
 #include <ETSIDI.h>
 #include <string>
 
-vector<Vector2D> Alfil::movimientosPosibles(Pieza* tablero[10][8]) {
+vector<Vector2D> Alfil::movimientosPosibles(Pieza* tablero[10][8],Tablero* /*refTablero*/) {
     vector<Vector2D> movs;
 
     movimientosDiagonal(tablero, posicion, movs);
