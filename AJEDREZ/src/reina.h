@@ -6,6 +6,6 @@ class Reina : public Pieza
 {
 public:
 	Reina(int x, int y, char c) : Pieza(x, y, c, tipo::REINA) {} // Constructor 
-	std::vector<Vector2D> movimientosPosibles(Pieza* tablero[10][8]) override;
+	std::vector<Vector2D> movimientosPosibles(Pieza* tablero[10][8],Tablero* /*refTablero*/) override;
 	void dibuja();
 };
