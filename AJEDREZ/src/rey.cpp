@@ -4,7 +4,7 @@
 #include <string>
 
 
-std::vector<Vector2D> Rey::movimientosPosibles(Pieza* tablero[10][8])
+std::vector<Vector2D> Rey::movimientosPosibles(Pieza* tablero[10][8],Tablero* refTablero)
 {
     std::vector<Vector2D> movs;
     int dx[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
