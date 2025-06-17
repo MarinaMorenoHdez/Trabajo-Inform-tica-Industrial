@@ -1,6 +1,6 @@
 # ♟️ AJEDREZ POKÉMON
 
-**Versión extendida de ajedrez en C++** con personajes de Pokémon como piezas, jugabilidad 1vs1 y contra la máquina, promoción personalizada de peones y diseño gráfico temático.
+**Versión de ajedrez en C++** con personajes de Pokémon como piezas, jugabilidad 1vs1 y contra la máquina, promoción personalizada de peones y diseño gráfico temático.
 
 ## Descripción del Proyecto
 
