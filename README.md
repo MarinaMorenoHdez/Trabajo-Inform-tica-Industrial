@@ -16,7 +16,9 @@ Este proyecto recrea un juego de ajedrez clásico con las siguientes particulari
 ---
 
 ## Capturas
+
 Tablero Pokémon
+
 ![Tablero](AJEDREZ/bin/imagenes/tablerocompletoajedrez.PNG)
 
 Promoción de peón  
