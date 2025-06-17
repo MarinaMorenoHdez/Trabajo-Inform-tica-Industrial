@@ -4,7 +4,7 @@
 #include <string>
 
 // Alfil y Caballo
-std::vector<Vector2D> Arzobispo::movimientosPosibles(Pieza* tablero[10][8])
+std::vector<Vector2D> Arzobispo::movimientosPosibles(Pieza* tablero[10][8],Tablero* /*refTablero*/)
 {
     std::vector<Vector2D> movs;
    
