@@ -6,6 +6,6 @@ class Torre : public Pieza
 {
 public:
 	Torre(int x, int y, char c) : Pieza(x, y, c, tipo::TORRE) {} // Constructor 
-	std::vector<Vector2D> movimientosPosibles(Pieza* tablero[10][8],/*refTablero*/) override;
+	std::vector<Vector2D> movimientosPosibles(Pieza* tablero[10][8],Tablero* /*refTablero*/) override;
 	void dibuja();
 };
