@@ -72,11 +72,10 @@ void OnKeyboardDown(unsigned char key, int x_t, int y_t)
 void OnTimer(int value)
 {
 	// Música de fondo 
-	//ETSIDI::play("sonidos/MusicaFondo.wav");
+	ETSIDI::play("sonidos/fondo.mp3");
 
-	glutTimerFunc(210000, OnTimer, 0); //25
+	glutTimerFunc(6000000, OnTimer, 0); //10min
 	glutPostRedisplay();
-}
 
 void OnMouseClick(int b, int state, int x, int y)
 {
