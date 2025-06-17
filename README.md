@@ -35,25 +35,29 @@ Menú principal
 
 ---
 
-## Estructura del Proyecto
-AJEDREZ_POKEMON/
+### Estructura del Proyecto
+
+```
+AJEDREZ_POKÉMON/
 │
 ├── src/
-│ ├── main.cpp
-│ ├── control.cpp/h
-│ ├── mundo.cpp/h
-│ ├── tablero.cpp/h
-│ ├── pieza.cpp/h
-│ ├── clases de piezas (reina, rey, etc)
-│ └── vector2D.h
+│   ├── main.cpp
+│   ├── control.cpp/h
+│   ├── mundo.cpp/h
+│   ├── tablero.cpp/h
+│   ├── pieza.cpp/h
+│   ├── clases de piezas (reina, rey, etc)
+│   └── vector2D.h
 │
 ├── imagenes/
-│ ├── inicio.png
-│ ├── tableroconmenu.png
-│ ├── peonfinalazul.png
-│ └── ... (sprites de Pokémon)
+│   ├── inicio.png
+│   ├── tableroconmenu.png
+│   ├── peonfinalazul.png
+│   └── ... (sprites de Pokémon)
 │
 └── README.md
+```
+
 
 ## Funcionalidades Clave
 
@@ -81,7 +85,7 @@ AJEDREZ_POKEMON/
 
 ---
 
-## 📜 Licencia
+## Licencia
 
 Este proyecto se distribuye bajo licencia MIT. Las imágenes de Pokémon son propiedad de sus respectivos creadores y se utilizan sin fines comerciales.
 
