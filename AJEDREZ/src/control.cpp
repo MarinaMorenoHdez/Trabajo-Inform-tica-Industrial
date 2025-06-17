@@ -335,6 +335,12 @@ void control::gestionarMovimientoJugador(Vector2D coord) {
                 estado = (mundo.getTurno() == 'N') ? PEONFINALROJO : PEONFINALAZUL;
                 return;
             }
+            //empate por falta de piezas
+        if (mundo.getTablero().empate()) {
+            std::cout << "¡Empate por falta de piezas!" << std::endl;
+            mundo.getTablero().setPartidaFinalizada(true); // Si tienes este método
+            estado = TABLAS; // Cambia el estado para mostrar el empate
+        }
 
             // Si juegas contra la IA, actúa ahora
             if (mundo.get_oponente() == 1) {
