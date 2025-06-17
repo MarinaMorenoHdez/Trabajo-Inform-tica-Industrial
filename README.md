@@ -37,10 +37,24 @@ Menú principal
 
 ---
 
-### Estructura del Proyecto
+### 🗂️ Estructura del Proyecto
 
 ```
 AJEDREZ_POKÉMON/
+│
+├── bin/
+│   ├── fuentes/
+│   ├── imagenes/
+│   ├── sonidos/
+│   ├── ETSIDI.dll
+│   ├── fmodL.dll
+│   └── freeglut.dll
+│
+├── lib/
+│   ├── ETSIDI.h
+│   ├── ETSIDI.lib
+│   ├── freeglut.h
+│   └── freeglut.lib
 │
 ├── src/
 │   ├── main.cpp
@@ -50,12 +64,6 @@ AJEDREZ_POKÉMON/
 │   ├── pieza.cpp/h
 │   ├── clases de piezas (reina, rey, etc)
 │   └── vector2D.h
-│
-├── imagenes/
-│   ├── inicio.png
-│   ├── tableroconmenu.png
-│   ├── peonfinalazul.png
-│   └── ... (sprites de Pokémon)
 │
 └── README.md
 ```
