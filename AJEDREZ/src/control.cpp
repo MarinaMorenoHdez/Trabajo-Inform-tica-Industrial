@@ -98,16 +98,31 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
     case MENUPAUSA:
         if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 27 && y_mundo <= 30) {
             estado = JUEGO;
+            
+        }
+        if (x_mundo >=7 && x_mundo <= 23 && y_mundo >= 13 && y_mundo <= 17) {
+            estado = INSTRUCCIONES;
         }
         if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 20 && y_mundo <= 24) {
             mundo.borrar();
-            mundo.inicializa(0, 1);
+            if (mundo.get_oponente() == 0) {
+                mundo.inicializa(0, 0);
+            }
+            else {
+                mundo.inicializa(0, 1);
+            }
+           
             mundo.dibuja();
             estado = JUEGO;
         }
         if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 7 && y_mundo <= 11) {
             mundo.borrar();
-            mundo.inicializa(0, 1);
+            if (mundo.get_oponente() == 0) {
+                mundo.inicializa(0, 0);
+            }
+            else {
+                mundo.inicializa(0, 1);
+            }
             mundo.dibuja();
             estado = START;
         }
@@ -121,17 +136,18 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
         char color = 'B';
         Pieza* nueva = nullptr;
 
-        if (x_mundo >= -10 && x_mundo <= 0 && y_mundo >= 24 && y_mundo <= 34)
+      
+        if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
             nueva = new Alfil(pos.x, pos.y, color);
-        else if (x_mundo >= 5 && x_mundo <= 15 && y_mundo >= 24 && y_mundo <= 34)
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
             nueva = new Arzobispo(pos.x, pos.y, color);
-        else if (x_mundo >= 20 && x_mundo <= 30 && y_mundo >= 24 && y_mundo <= 34)
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= 16 && y_mundo <= 28)
             nueva = new Caballo(pos.x, pos.y, color);
-        else if (x_mundo >= -10 && x_mundo <= 0 && y_mundo >= 10 && y_mundo <= 20)
+        else if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= -1.6 && y_mundo <= 13)
             nueva = new Canciller(pos.x, pos.y, color);
-        else if (x_mundo >= 5 && x_mundo <= 15 && y_mundo >= 10 && y_mundo <= 20)
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= -1.6 && y_mundo <= 13)
             nueva = new Reina(pos.x, pos.y, color);
-        else if (x_mundo >= 20 && x_mundo <= 30 && y_mundo >= 10 && y_mundo <= 20)
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= -1.6 && y_mundo <= 13)
             nueva = new Torre(pos.x, pos.y, color);
 
         if (nueva) {
@@ -153,17 +169,17 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 
         Pieza* nueva = nullptr;
 
-        if (x_mundo >= 1 && x_mundo <= 10 && y_mundo >= 28 && y_mundo <= 38)
+         if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
             nueva = new Alfil(pos.x, pos.y, color);
-        else if (x_mundo >= 19 && x_mundo <= 28 && y_mundo >= 28 && y_mundo <= 38)
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
             nueva = new Arzobispo(pos.x, pos.y, color);
-        else if (x_mundo >= 36 && x_mundo <= 45 && y_mundo >= 28 && y_mundo <= 38)
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= 16 && y_mundo <= 28)
             nueva = new Caballo(pos.x, pos.y, color);
-        else if (x_mundo >= 1 && x_mundo <= 10 && y_mundo >= 12 && y_mundo <= 22)
+        else if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= -1.6 && y_mundo <= 13)
             nueva = new Canciller(pos.x, pos.y, color);
-        else if (x_mundo >= 19 && x_mundo <= 28 && y_mundo >= 12 && y_mundo <= 22)
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= -1.6 && y_mundo <= 13)
             nueva = new Reina(pos.x, pos.y, color);
-        else if (x_mundo >= 36 && x_mundo <= 45 && y_mundo >= 12 && y_mundo <= 22)
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= -1.6 && y_mundo <= 13)
             nueva = new Torre(pos.x, pos.y, color);
 
         if (nueva) {
@@ -176,9 +192,14 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 
 
     case GANAROJO:
-        if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
+            if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
             mundo.borrar();
-            mundo.inicializa(0, 1);
+            if (mundo.get_oponente() == 0) {
+                mundo.inicializa(0, 0);
+            }
+            else {
+                mundo.inicializa(0, 1);
+            }
             mundo.dibuja();
             estado = JUEGO;
             std::cout << "Reinicio\n";
@@ -191,7 +212,12 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
     case GANAAZUL:
         if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
             mundo.borrar();
-            mundo.inicializa(0, 1);
+            if (mundo.get_oponente() == 0) {
+                mundo.inicializa(0, 0);
+            }
+            else {
+                mundo.inicializa(0, 1);
+            }
             tablero.dibuja();
             estado = JUEGO;
             std::cout << "Reinicio\n";
@@ -223,6 +249,7 @@ void control::dibuja() {
         mundo.dibuja();
         return;
     case MENUPAUSA:texId = ETSIDI::getTexture("imagenes/menupausa.png").id; break;
+    case INSTRUCCIONES:texId = ETSIDI::getTexture("imagenes/instrucciones.png").id; break;
     case PEONFINALAZUL:texId = ETSIDI::getTexture("imagenes/peonfinalrojo.png").id; break;
     case PEONFINALROJO:texId = ETSIDI::getTexture("imagenes/peonfinalazul.png").id; break;
     case GANAROJO: texId = ETSIDI::getTexture("imagenes/rojoganador.png").id; break;
