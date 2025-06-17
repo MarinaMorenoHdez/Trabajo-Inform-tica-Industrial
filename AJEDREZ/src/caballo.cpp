@@ -3,7 +3,7 @@
 #include <ETSIDI.h>
 #include <string>
 
-std::vector<Vector2D> Caballo::movimientosPosibles(Pieza* tablero[10][8])
+std::vector<Vector2D> Caballo::movimientosPosibles(Pieza* tablero[10][8],Tablero* /*refTablero*/)
 {
     std::vector<Vector2D> movs;
     
