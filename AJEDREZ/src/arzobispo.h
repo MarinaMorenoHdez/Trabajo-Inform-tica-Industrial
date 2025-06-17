@@ -9,6 +9,6 @@ class Arzobispo : public Pieza
 public:
 	Arzobispo(int x, int y, char c) : Pieza(x, y, c, tipo::ARZOBISPO) {} // Constructor 
 
-	std::vector<Vector2D> movimientosPosibles(Pieza* tablero[10][8]) override ;
+	std::vector<Vector2D> movimientosPosibles(Pieza* tablero[10][8],Tablero* /*refTablero*/) override ;
 	void dibuja();
 };
