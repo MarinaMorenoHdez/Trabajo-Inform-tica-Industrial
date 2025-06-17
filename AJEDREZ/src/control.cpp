@@ -18,39 +18,44 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 
     std::cout << "Click en coords mundo: x=" << x_mundo << ", y=" << y_mundo << std::endl;
 
-    switch (estado)
+     switch (estado)
     {
+
     case INICIO:
-        if (x_mundo >= 10 && x_mundo <= 30 && y_mundo >= 3 && y_mundo <= 10) {
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= 1.5 && x_mundo <= 32 && y_mundo >= 3 && y_mundo <= 6) {
             estado = START;
         }
         break;
 
     case START:
-        if (x_mundo >= 8 && x_mundo <= 23 && y_mundo >= 18 && y_mundo <= 21) {
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= 7.5 && x_mundo <= 24.5 && y_mundo >= 18 && y_mundo <= 22) {
             estado = V1x1MENU;
             std::cout << "Cambio a V1x1MENU\n";
         }
-        else if (x_mundo >= 8 && x_mundo <= 23 && y_mundo >= 10 && y_mundo <= 18) {
+        else if (x_mundo >= 7.5 && x_mundo <= 24.5 && y_mundo >= 12 && y_mundo <= 15.5) {
             estado = VxMMENU;
             std::cout << "Cambio a VxMMENU\n";
         }
         break;
 
     case V1x1MENU:
-        if (x_mundo >= 8 && x_mundo <= 23 && y_mundo >= 18 && y_mundo <= 21) {
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= 7.5 && x_mundo <= 24.5 && y_mundo >= 18 && y_mundo <= 22) {
             mundo.inicializa(0, 0);
             estado = RATON;
             std::cout << "Cambio a estado RATON (1vs1)\n";
         }
-        else if (x_mundo >= 8 && x_mundo <= 23 && y_mundo >= 10 && y_mundo <= 18) {
+        else if (x_mundo >= 7.5 && x_mundo <= 24.5 && y_mundo >= 12 && y_mundo <= 15.5) {
             estado = V1x1_INSTR;
             std::cout << "Cambio a estado V1x1_INSTR\n";
         }
         break;
 
     case V1x1_INSTR:
-        if (x_mundo >= 13 && x_mundo <= 18 && y_mundo >= 0.5 && y_mundo <= 1.2) {
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= 7 && x_mundo <= 19.3 && y_mundo >= -0.4 && y_mundo <= 1.7) {
             mundo.inicializa(0, 0);
             estado = RATON;
             std::cout << "JUGAR desde instrucciones 1vs1\n";
@@ -58,19 +63,21 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
         break;
 
     case VxMMENU:
-        if (x_mundo >= 15 && x_mundo <= 45 && y_mundo >= 20 && y_mundo <= 28) {
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= 7.5 && x_mundo <= 24.5 && y_mundo >= 18 && y_mundo <= 22) {
             mundo.inicializa(0, 1);
             estado = RATON;
             std::cout << "Cambio a estado RATON (vs máquina)\n";
         }
-        else if (x_mundo >= 15 && x_mundo <= 45 && y_mundo >= 10 && y_mundo <= 18) {
+        else if (x_mundo >= 7.5 && x_mundo <= 24.5 && y_mundo >= 12 && y_mundo <= 15.5) {
             estado = VxM_INSTR;
             std::cout << "Cambio a estado VxM_INSTR\n";
         }
         break;
 
     case VxM_INSTR:
-        if (x_mundo >= 13 && x_mundo <= 18 && y_mundo >= 0.5 && y_mundo <= 1.2) {
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= 7 && x_mundo <= 19.3 && y_mundo >= -0.4 && y_mundo <= 1.7) {
             mundo.inicializa(0, 1);
             estado = RATON;
             std::cout << "JUGAR desde instrucciones vs máquina\n";
@@ -78,32 +85,39 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
         break;
 
     case RATON:
-        if (x_mundo >= 6 && x_mundo <= 27 && y_mundo >= 0.3 && y_mundo <= 2.5) {
+
+        if (x_mundo >= 6.8 && x_mundo <= 27 && y_mundo >= -0.1 && y_mundo <= 1.7) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             estado = JUEGO;
             std::cout << "Cambio a estado JUEGO desde pantalla RATON (instrucciones)\n";
+
         }
         break;
-
     case JUEGO:
     case JUEGO_1VS1:
         if (boton == GLUT_LEFT_BUTTON && abajo) {
             Vector2D coord = mouseToBoardCoords(x, y);
             gestionarMovimientoJugador(coord);
         }
-        if (x_mundo >= 36 && x_mundo <= 43 && y_mundo >= -3 && y_mundo <= 1) {
+        if (x_mundo >= 36 && x_mundo <= 43 && y_mundo >= -3 && y_mundo <= -0.5) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             estado = MENUPAUSA;
         }
         break;
 
     case MENUPAUSA:
+        ETSIDI::play("sonidos/pulsartecla.mp3");
         if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 27 && y_mundo <= 30) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             estado = JUEGO;
-            
+
         }
-        if (x_mundo >=7 && x_mundo <= 23 && y_mundo >= 13 && y_mundo <= 17) {
+        if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 13 && y_mundo <= 17) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             estado = INSTRUCCIONES;
         }
         if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 20 && y_mundo <= 24) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             mundo.borrar();
             if (mundo.get_oponente() == 0) {
                 mundo.inicializa(0, 0);
@@ -111,11 +125,12 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             else {
                 mundo.inicializa(0, 1);
             }
-           
+
             mundo.dibuja();
             estado = JUEGO;
         }
         if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 7 && y_mundo <= 11) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             mundo.borrar();
             if (mundo.get_oponente() == 0) {
                 mundo.inicializa(0, 0);
@@ -127,16 +142,58 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             estado = START;
         }
         if (x_mundo >= 7 && x_mundo <= 23 && y_mundo >= 0.5 && y_mundo <= 4) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             exit(0);
         }
         break;
+    case INSTRUCCIONES:
+    {
+        if (x_mundo >= -14 && x_mundo <= -7 && y_mundo >= -3 && y_mundo <= 0) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
+            estado = MENUPAUSA;
+        }
+    }
     case PEONFINALAZUL:
     {
         Vector2D pos = mundo.getTablero().getPeonParaPromocion();
         char color = 'B';
         Pieza* nueva = nullptr;
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Alfil(pos.x, pos.y, color);
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Arzobispo(pos.x, pos.y, color);
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Caballo(pos.x, pos.y, color);
+        else if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Canciller(pos.x, pos.y, color);
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Reina(pos.x, pos.y, color);
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Torre(pos.x, pos.y, color);
 
-      
+        if (nueva) {
+            mundo.getTablero().reemplazarPeonPromocionado(nueva);
+            mundo.getTablero().cancelarPromocion();
+            mundo.getTablero().cambiarTurno();
+            limpiarSeleccion();
+            estado = JUEGO;
+        }
+
+        break;
+    }
+
+
+    case PEONFINALROJO:
+    {
+
+        std::cout << "Click: x = " << x_mundo << ", y = " << y_mundo << std::endl;
+
+        Vector2D pos = mundo.getTablero().getPeonParaPromocion();
+        char color = 'N';
+
+        Pieza* nueva = nullptr;
+        ETSIDI::play("sonidos/pulsartecla.mp3");
         if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
             nueva = new Alfil(pos.x, pos.y, color);
         else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
@@ -161,42 +218,9 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
     }
 
 
-    case PEONFINALROJO:
-    {
-
-        std::cout << "Click: x = " << x_mundo << ", y = " << y_mundo << std::endl;
-
-        Vector2D pos = mundo.getTablero().getPeonParaPromocion();
-        char color = 'N';
-
-        Pieza* nueva = nullptr;
-
-         if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Alfil(pos.x, pos.y, color);
-        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Arzobispo(pos.x, pos.y, color);
-        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Caballo(pos.x, pos.y, color);
-        else if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Canciller(pos.x, pos.y, color);
-        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Reina(pos.x, pos.y, color);
-        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Torre(pos.x, pos.y, color);
-
-        if (nueva) {
-            mundo.getTablero().reemplazarPeonPromocionado(nueva);
-            mundo.getTablero().cancelarPromocion();
-            estado = JUEGO;
-            mundo.getTablero().cambiarTurno();
-            limpiarSeleccion();
-        }
-        break;
-    }
-
-
     case GANAROJO:
-            if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
+        if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             mundo.borrar();
             if (mundo.get_oponente() == 0) {
                 mundo.inicializa(0, 0);
@@ -209,12 +233,14 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             std::cout << "Reinicio\n";
         }
         if (x_mundo >= 34 && x_mundo <= 44 && y_mundo >= -2 && y_mundo <= 1) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             exit(0);
         }
         break;
 
     case GANAAZUL:
         if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             mundo.borrar();
             if (mundo.get_oponente() == 0) {
                 mundo.inicializa(0, 0);
@@ -227,11 +253,31 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             std::cout << "Reinicio\n";
         }
         if (x_mundo >= 34 && x_mundo <= 44 && y_mundo >= -2 && y_mundo <= 1) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
             exit(0);
         }
         break;
 
     case TABLAS:
+        if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
+            mundo.borrar();
+            if (mundo.get_oponente() == 0) {
+                mundo.inicializa(0, 0);
+            }
+            else {
+                mundo.inicializa(0, 1);
+            }
+            tablero.dibuja();
+            estado = JUEGO;
+            std::cout << "Reinicio\n";
+        }
+        if (x_mundo >= 34 && x_mundo <= 44 && y_mundo >= -2 && y_mundo <= 1) {
+            ETSIDI::play("sonidos/pulsartecla.mp3");
+            exit(0);
+        }
+        break;
+
         break;
     }
 }
