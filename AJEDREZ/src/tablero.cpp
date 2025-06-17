@@ -674,3 +674,34 @@ bool Tablero::empate() {
 	return false;
 }
 
+bool Tablero::ahogado(char color) {
+	// Si está en jaque, no es ahogado
+	if (Jaque(color)) return false;
+
+	// Para cada pieza de colo ver si tiene algún movimiento legal
+	for (Pieza* p : piezas) {
+		if (p->getColor() == color) {
+			std::vector<Vector2D> movs = p->movimientosPosibles(tablero, this);
+			Vector2D origen = p->getPosicion();
+			for (const Vector2D& destino : movs) {
+				// Simular el movimiento
+				Pieza* destinoPieza = tablero[destino.x][destino.y];
+				tablero[origen.x][origen.y] = nullptr;
+				tablero[destino.x][destino.y] = p;
+				p->mueve(destino);
+
+				bool sigueEnJaque = Jaque(color);
+
+				// Revertir simulación
+				p->mueve(origen);
+				tablero[origen.x][origen.y] = p;
+				tablero[destino.x][destino.y] = destinoPieza;
+
+				if (!sigueEnJaque)
+					return false; // Hay al menos un movimiento legal
+			}
+		}
+	}
+	// No hay movimientos legales y no está en jaque: ahogado
+	return true;
+}
