@@ -37,7 +37,6 @@ public:
 	bool Jaque(char color);
 	bool JaqueMate(char color);
 	void borrar();
-	void cambioPeon();
 	bool empate();
 	bool ahogado(char color);
 	void setPartidaFinalizada(bool fin) { partidaFinalizada = fin; }
