@@ -4,7 +4,7 @@
 #include <string>
 
 
-vector<Vector2D> Peon::movimientosPosibles(Pieza* tablero[10][8]) {
+vector<Vector2D> Peon::movimientosPosibles(Pieza* tablero[10][8],/*refTablero*/) {
     vector<Vector2D> movs;
 int dir = (color == 'B') ? 1 : -1;
 int x = posicion.x;
