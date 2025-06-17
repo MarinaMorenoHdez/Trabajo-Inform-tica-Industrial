@@ -655,3 +655,15 @@ void Tablero::reemplazarPeonPromocionado(Pieza* nueva) {
 	promocionPendiente = false;
 }
 
+bool Tablero::casillaAmenazada(Pieza* tablero[10][8], Vector2D casilla, char color) {
+	for (Pieza* p : piezas) {
+		if (p && p->getColor() != color) {
+			std::vector<Vector2D> movs = p->movimientosPosibles(tablero,this);
+			for (const Vector2D& m : movs) {
+				if (m.x == casilla.x && m.y == casilla.y)
+					return true;
+			}
+		}
+	}
+	return false;
+}
