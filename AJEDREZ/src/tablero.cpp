@@ -88,6 +88,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
 	bool piezaEliminada = false;
 	if (destinoPieza != nullptr && it != piezas.end()) {
+		ETSIDI::play("sonidos/comer.mp3");
 		piezas.erase(it);
 		piezaEliminada = true;
 	}
@@ -129,15 +130,22 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	std::cout << "[DEBUG] Turno actual: " << turno << ", comprobando jaque a: " << enemigo << std::endl;
 	// Comprobar si el rey del enemigo está en jaque
 	if (Jaque(enemigo)) {
+		ETSIDI::play("sonidos/jaque.mp3");
 		std::cout << "¡Jaque al Rey " << enemigo << "!\n";
 		if (JaqueMate(enemigo)) {
 			std::cout << "¡Jaque mate! Gana el jugador " << turno << std::endl;
 			partidaFinalizada = true; // Partida finalizada
 			if (refControl != nullptr) {
 				if (turno == 'B')  // Gana blanco (ROJO)
+				{
+					ETSIDI::play("sonidos/victoria.mp3");
 					refControl->Set_Estado(GANAROJO);
+				}
 				else               // Gana negro (AZUL)
+				{
+					ETSIDI::play("sonidos/victoria.mp3");
 					refControl->Set_Estado(GANAAZUL);
+				}
 			}
 		}
 	}
@@ -155,9 +163,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	cambiarTurno();
 	return true;
 }
-void cambioPeon() {
 
-}
 
 Tablero::~Tablero() {
 	for (auto pieza : piezas) {
