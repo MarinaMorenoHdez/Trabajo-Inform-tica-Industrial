@@ -38,6 +38,8 @@ public:
 	bool JaqueMate(char color);
 	void borrar();
 	void cambioPeon();
+	bool empate();
+	void setPartidaFinalizada(bool fin) { partidaFinalizada = fin; }
 
 	bool casillaAmenazada(Pieza* tablero[10][8], Vector2D casilla, char color);
 
