@@ -26,18 +26,29 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	Pieza* destinoPieza = tablero[destino.x][destino.y];
 
 	// No hay pieza en la posición de origen
-	if (!pieza) return false;
-
+	if (!pieza) {
+		ETSIDI::play("sonidos/error.mp3");
+		return false;
+	}
 	// Limites tablero (origen y destino)
-	if (origen.x < 0 || origen.x >= 10 || origen.y < 0 || origen.y >= 8) return false;
-	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8) return false;
-
+	if (origen.x < 0 || origen.x >= 10 || origen.y < 0 || origen.y >= 8) {
+		ETSIDI::play("sonidos/error.mp3");
+		return false;
+	}
+	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8) {
+		ETSIDI::play("sonidos/error.mp3");
+		return false;
+	}
 	//comprobar turno 
-	if (pieza->getColor() != turno) return false;
-
+	if (pieza->getColor() != turno) {
+		ETSIDI::play("sonidos/error.mp3");
+		return false;
+	}
 	// No comerte a tu rey
-	if (destinoPieza && destinoPieza->getTipo() == tipo::REY) return false;
-
+	if (destinoPieza && destinoPieza->getTipo() == tipo::REY) {
+		ETSIDI::play("sonidos/error.mp3");
+		return false;
+	}
 
 	// Movimientos posibles de cada pieza
 	bool valido = false;
@@ -77,6 +88,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 		if (origen.x != destino.x) {
 			// Solo permite capturar si hay pieza enemiga
 			if (!destinoPieza || destinoPieza->getColor() == turno) {
+				ETSIDI::play("sonidos/error.mp3");
 				return false;
 			}
 		}
@@ -88,7 +100,6 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
 	bool piezaEliminada = false;
 	if (destinoPieza != nullptr && it != piezas.end()) {
-		ETSIDI::play("sonidos/comer.mp3");
 		piezas.erase(it);
 		piezaEliminada = true;
 	}
@@ -110,6 +121,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	}
 
 	if (enJaque) {
+		ETSIDI::play("sonidos/error.mp3");
 		std::cout << "Movimiento no permitido, El rey sigue en jaque\n";
 		return false;
 	}
@@ -119,6 +131,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 		// Eliminar del vector de piezas
 		auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
 		if (it != piezas.end()) piezas.erase(it);
+		ETSIDI::play("sonidos/comer.mp3");
 		delete destinoPieza;
 	}
 
