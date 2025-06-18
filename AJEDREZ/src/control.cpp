@@ -386,14 +386,16 @@ void control::gestionarMovimientoJugador(Vector2D coord) {
             std::cout << "¡Empate por falta de piezas!" << std::endl;
             mundo.getTablero().setPartidaFinalizada(true); // Si tienes este método
             estado = TABLAS; // Cambia el estado para mostrar el empate
+            ETSIDI::play("sonidos/victoria.mp3");
             }
             //empate por rey ahogado
             char turnoActual = mundo.getTablero().getTurno();
             char rival = (turnoActual == 'B') ? 'N' : 'B';
-            if (mundo.getTablero().ahogado(rival)) {
+            if (mundo.getTablero().ahogado(turnoActual)) {
                 std::cout << "¡Empate por rey ahogado!" << std::endl;
                 mundo.getTablero().setPartidaFinalizada(true);
                 estado = TABLAS;
+                ETSIDI::play("sonidos/victoria.mp3");
                 return;
             }           
 
