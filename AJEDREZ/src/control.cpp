@@ -395,13 +395,7 @@ void control::gestionarMovimientoJugador(Vector2D coord) {
         }
     }
     else {
-        // Permitir cambiar de selección si pulsas otra pieza propia
-        if (p && p->getColor() == mundo.getTablero().getTurno()) {
-            piezaSeleccionada = true;
-            casillaSeleccionada = coord;
-            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);
-            return;
-        }
+   
         if (mundo.getTablero().moverPieza(casillaSeleccionada, coord)) {
             limpiarSeleccion();
 
