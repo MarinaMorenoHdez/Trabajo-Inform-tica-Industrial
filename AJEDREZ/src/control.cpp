@@ -18,7 +18,7 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 
     std::cout << "Click en coords mundo: x=" << x_mundo << ", y=" << y_mundo << std::endl;
 
-     switch (estado)
+    switch (estado)
     {
 
     case INICIO:
@@ -153,6 +153,7 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             estado = MENUPAUSA;
         }
     }
+    /*
     case PEONFINALAZUL:
     {
         Vector2D pos = mundo.getTablero().getPeonParaPromocion();
@@ -182,8 +183,40 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 
         break;
     }
+    */
 
+    case PEONFINALAZUL:
+    {
+        Vector2D pos = mundo.getTablero().getPeonParaPromocion();
+        Pieza* peon = mundo.getTablero().getPiezaEn(pos);
+        char color = peon ? peon->getColor() : 'B'; // Asegúrate de usar el color correcto
+        Pieza* nueva = nullptr;
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Alfil(pos.x, pos.y, color);
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Arzobispo(pos.x, pos.y, color);
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Caballo(pos.x, pos.y, color);
+        else if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Canciller(pos.x, pos.y, color);
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Reina(pos.x, pos.y, color);
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Torre(pos.x, pos.y, color);
 
+        if (nueva) {
+            mundo.getTablero().reemplazarPeonPromocionado(nueva);
+            mundo.getTablero().cancelarPromocion();
+            limpiarSeleccion();
+            estado = JUEGO;
+			//if (mundo.get_oponente() == 0) {
+				mundo.getTablero().cambiarTurno();
+			//}
+        }
+        break;
+    }
+    /*
     case PEONFINALROJO:
     {
 
@@ -216,7 +249,38 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
         }
         break;
     }
+    */
+    case PEONFINALROJO:
+    {
+        Vector2D pos = mundo.getTablero().getPeonParaPromocion();
+        Pieza* peon = mundo.getTablero().getPiezaEn(pos);
+        char color = peon ? peon->getColor() : 'N'; // Asegúrate de usar el color correcto
+        Pieza* nueva = nullptr;
+        ETSIDI::play("sonidos/pulsartecla.mp3");
+        if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Alfil(pos.x, pos.y, color);
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Arzobispo(pos.x, pos.y, color);
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= 16 && y_mundo <= 28)
+            nueva = new Caballo(pos.x, pos.y, color);
+        else if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Canciller(pos.x, pos.y, color);
+        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Reina(pos.x, pos.y, color);
+        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= -1.6 && y_mundo <= 13)
+            nueva = new Torre(pos.x, pos.y, color);
 
+        if (nueva) {
+            mundo.getTablero().reemplazarPeonPromocionado(nueva);
+            mundo.getTablero().cancelarPromocion();
+            limpiarSeleccion();
+            estado = JUEGO;
+            //if (mundo.get_oponente() == 0) {
+                mundo.getTablero().cambiarTurno();
+            //}
+        }
+        break;
+    }
 
     case GANAROJO:
         if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
@@ -259,6 +323,7 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
         break;
 
     case TABLAS:
+        std::cout << "Cargando imagen: imagenes/tablas.png" << std::endl;
         if (x_mundo >= -14 && x_mundo <= -4 && y_mundo >= -3 && y_mundo <= 1) {
             ETSIDI::play("sonidos/pulsartecla.mp3");
             mundo.borrar();
@@ -283,7 +348,31 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
 }
 
 
+
+
 void control::dibuja() {
+    // Movimiento de la IA si está pendiente y es su turno
+    if (iaPendiente && mundo.get_oponente() == 1 && mundo.getTablero().getTurno() == 'N' && !mundo.getTablero().isPartidaFinalizada()) {
+        Movimiento mejor = ia.calcularMejorMovimiento(mundo.getTablero(), 'N');
+        if (mejor.origen.x != -1) {
+            mundo.getTablero().moverPieza(mejor.origen, mejor.destino);
+
+            // Promoción automática de la IA si corresponde
+            if (mundo.getTablero().hayPromocionPendiente()) {
+                Vector2D pos = mundo.getTablero().getPeonParaPromocion();
+                Pieza* peon = mundo.getTablero().getPiezaEn(pos);
+                if (peon && peon->getColor() == 'N') {
+                    Pieza* nueva = new Reina(pos.x, pos.y, 'N');
+                    mundo.getTablero().reemplazarPeonPromocionado(nueva);
+                    mundo.getTablero().cancelarPromocion();
+                    limpiarSeleccion();
+                    mundo.getTablero().cambiarTurno();
+                }
+            }
+        }
+        iaPendiente = false;
+    }
+
     gluLookAt(15, 18, 60, 15, 18, 0, 0.0, 1.0, 0.0);
 
     int texId = -1;
@@ -298,10 +387,10 @@ void control::dibuja() {
     case JUEGO:
         mundo.dibuja();
         return;
-    case MENUPAUSA:texId = ETSIDI::getTexture("imagenes/menupausa.png").id; break;
-    case INSTRUCCIONES:texId = ETSIDI::getTexture("imagenes/instrucciones.png").id; break;
-    case PEONFINALAZUL:texId = ETSIDI::getTexture("imagenes/peonfinalrojo.png").id; break;
-    case PEONFINALROJO:texId = ETSIDI::getTexture("imagenes/peonfinalazul.png").id; break;
+    case MENUPAUSA: texId = ETSIDI::getTexture("imagenes/menupausa.png").id; break;
+    case INSTRUCCIONES: texId = ETSIDI::getTexture("imagenes/instrucciones.png").id; break;
+    case PEONFINALAZUL: texId = ETSIDI::getTexture("imagenes/peonfinalrojo.png").id; break;
+    case PEONFINALROJO: texId = ETSIDI::getTexture("imagenes/peonfinalazul.png").id; break;
     case GANAROJO: texId = ETSIDI::getTexture("imagenes/rojoganador.png").id; break;
     case GANAAZUL: texId = ETSIDI::getTexture("imagenes/azulganador.png").id; break;
     case TABLAS: texId = ETSIDI::getTexture("imagenes/tablas.png").id; break;
@@ -356,7 +445,7 @@ control::control() {
     mundo.setControl(this);  
 }
 
-
+/*
 void control::gestionarMovimientoJugador(Vector2D coord) {
     if (mundo.getTablero().isPartidaFinalizada()) {
         std::cout << "¡Jaque Mate! La partida ha terminado.\n";
@@ -383,11 +472,12 @@ void control::gestionarMovimientoJugador(Vector2D coord) {
             }
             //empate por falta de piezas
             if (mundo.getTablero().empate()) {
-            std::cout << "¡Empate por falta de piezas!" << std::endl;
-            mundo.getTablero().setPartidaFinalizada(true); // Si tienes este método
-            estado = TABLAS; // Cambia el estado para mostrar el empate
-            ETSIDI::play("sonidos/victoria.mp3");
+                std::cout << "¡Empate por falta de piezas!" << std::endl;
+                mundo.getTablero().setPartidaFinalizada(true); // Si tienes este método
+                estado = TABLAS; // Cambia el estado para mostrar el empate
+                ETSIDI::play("sonidos/victoria.mp3");
             }
+            
             //empate por rey ahogado
             char turnoActual = mundo.getTablero().getTurno();
             char rival = (turnoActual == 'B') ? 'N' : 'B';
@@ -397,8 +487,7 @@ void control::gestionarMovimientoJugador(Vector2D coord) {
                 estado = TABLAS;
                 ETSIDI::play("sonidos/victoria.mp3");
                 return;
-            }           
-
+            }
             // Si juegas contra la IA, actúa ahora
             if (mundo.get_oponente() == 1) {
                 Movimiento mejor = ia.calcularMejorMovimiento(mundo.getTablero(), mundo.getTablero().getTurno());
@@ -413,3 +502,86 @@ void control::gestionarMovimientoJugador(Vector2D coord) {
         }
     }
 }
+*/
+
+//v1
+
+void control::gestionarMovimientoJugador(Vector2D coord) {
+    if (mundo.getTablero().isPartidaFinalizada()) {
+        std::cout << "¡Jaque Mate! La partida ha terminado.\n";
+        return;
+    }
+
+    Pieza* p = mundo.getTablero().getPiezaEn(coord);
+
+    if (!piezaSeleccionada) {
+        if (p && p->getColor() == mundo.getTablero().getTurno()) {
+            piezaSeleccionada = true;
+            casillaSeleccionada = coord;
+            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);
+        }
+    }
+    else {
+        // Permitir cambiar de selección si pulsas otra pieza propia
+        if (p && p->getColor() == mundo.getTablero().getTurno()) {
+            piezaSeleccionada = true;
+            casillaSeleccionada = coord;
+            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);
+            return;
+        }
+        if (mundo.getTablero().moverPieza(casillaSeleccionada, coord)) {
+            limpiarSeleccion();
+
+            // Empates y promoción igual que antes...
+
+            if (mundo.getTablero().empate()) {
+                std::cout << "¡Empate por falta de piezas!" << std::endl;
+                mundo.getTablero().setPartidaFinalizada(true);
+                estado = TABLAS;
+                ETSIDI::play("sonidos/victoria.mp3");
+            }
+            char turnoActual = mundo.getTablero().getTurno();
+            if (mundo.getTablero().ahogado(turnoActual)) {
+                std::cout << "¡Empate por rey ahogado!" << std::endl;
+                mundo.getTablero().setPartidaFinalizada(true);
+                estado = TABLAS;
+                ETSIDI::play("sonidos/victoria.mp3");
+                return;
+            }
+
+            // Si es el turno de la IA, marca pendiente
+            if (mundo.get_oponente() == 1 && mundo.getTablero().getTurno() == 'N') {
+                iaPendiente = true;
+            }
+
+            // Promoción
+            if (mundo.getTablero().hayPromocionPendiente()) {
+                Vector2D pos = mundo.getTablero().getPeonParaPromocion();
+                Pieza* peon = mundo.getTablero().getPiezaEn(pos);
+                if (peon && peon->getColor() == 'N' && mundo.get_oponente() == 1) {
+                    Pieza* nueva = new Reina(pos.x, pos.y, 'N');
+                    mundo.getTablero().reemplazarPeonPromocionado(nueva);
+                    mundo.getTablero().cancelarPromocion();
+                    limpiarSeleccion();
+                    mundo.getTablero().cambiarTurno();
+                    return;
+                }
+                else if (peon && peon->getColor() == 'B') {
+                    estado = PEONFINALAZUL;
+                    return;
+                }
+                else if (peon && peon->getColor() == 'N') {
+                    estado = PEONFINALROJO;
+                    return;
+                }
+            }
+        }
+        else {
+            piezaSeleccionada = false;
+            casillasPosibles.clear();
+        }
+        
+    }
+
+}
+
