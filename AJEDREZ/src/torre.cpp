@@ -3,7 +3,7 @@
 #include <ETSIDI.h>
 #include <string>
 
-std::vector<Vector2D> Torre::movimientosPosibles(Pieza* tablero[10][8],Tablero* /*refTablero*/)
+std::vector<Vector2D> Torre::movimientosPosibles(Pieza* tablero[10][8], Tablero* /*refTablero*/)
 {
     std::vector<Vector2D> movs;
 
@@ -14,9 +14,9 @@ std::vector<Vector2D> Torre::movimientosPosibles(Pieza* tablero[10][8],Tablero* 
 void Torre::dibuja() {
     std::string ruta = (color == 'B') ? "imagenes/torrerojo.png" : "imagenes/torreazules.png";
     ETSIDI::Sprite sprite(ruta.c_str());
-    sprite.setSize(4, 4);  // Ajusta si lo ves muy grande o pequeÃ±o
+    sprite.setSize(4, 4);  // Ajusta si lo ves muy grande o pequeño
 
-    float x = posicion.x * 4.0f;  // tamaÃ±o casilla
+    float x = posicion.x * 4.0f;  // tamaño casilla
     float y = posicion.y * 4.0f;
 
     glPushMatrix();
@@ -24,3 +24,4 @@ void Torre::dibuja() {
     sprite.draw();
     glPopMatrix();
 }
+

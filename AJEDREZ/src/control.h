@@ -12,7 +12,7 @@ enum
 	JUEGO = 0, INICIO, START,
 	V1x1MENU, V1x1_INSTR,
 	VxMMENU, VxM_INSTR,
-	RATON, JUEGO_1VS1,MENUPAUSA,INSTRUCCIONES,PEONFINALROJO, PEONFINALAZUL, GANAROJO,GANAAZUL,TABLAS
+	RATON, JUEGO_1VS1, MENUPAUSA, INSTRUCCIONES,PEONFINALROJO, PEONFINALAZUL, GANAROJO, GANAAZUL, TABLAS
 };
 
 class control {
@@ -21,10 +21,10 @@ class control {
 	Mundo mundo;
 	Tablero tablero;
 	IA ia;
-
+	bool iaPendiente = false;
 
 private:
-	Vector2D casillaSeleccionada = { -1, -1 };  // Inicialmente inv√°lida
+	Vector2D casillaSeleccionada = { -1, -1 };  // Inicialmente inv·lida
 	bool piezaSeleccionada = false;
 	Vector2D seleccion;
 	void gestionarMovimientoJugador(Vector2D coord);

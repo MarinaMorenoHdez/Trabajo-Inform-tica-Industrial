@@ -20,33 +20,33 @@ Tablero::Tablero() {
 	inicializar(); // Llamar a la función para inicializar las piezas
 }
 
-bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
+bool Tablero::moverPieza(Vector2D origen, Vector2D destino, bool reproducirSonido) {
 
 	Pieza* pieza = tablero[origen.x][origen.y];
 	Pieza* destinoPieza = tablero[destino.x][destino.y];
 
 	// No hay pieza en la posición de origen
 	if (!pieza) {
-		ETSIDI::play("sonidos/error.mp3");
+		if (reproducirSonido) ETSIDI::play("sonidos/error.mp3");
 		return false;
 	}
 	// Limites tablero (origen y destino)
 	if (origen.x < 0 || origen.x >= 10 || origen.y < 0 || origen.y >= 8) {
-		ETSIDI::play("sonidos/error.mp3");
+		if (reproducirSonido) ETSIDI::play("sonidos/error.mp3");
 		return false;
 	}
 	if (destino.x < 0 || destino.x >= 10 || destino.y < 0 || destino.y >= 8) {
-		ETSIDI::play("sonidos/error.mp3");
+		if (reproducirSonido) ETSIDI::play("sonidos/error.mp3");
 		return false;
 	}
 	//comprobar turno 
 	if (pieza->getColor() != turno) {
-		ETSIDI::play("sonidos/error.mp3");
+		if (reproducirSonido) ETSIDI::play("sonidos/error.mp3");
 		return false;
 	}
 	// No comerte a tu rey
 	if (destinoPieza && destinoPieza->getTipo() == tipo::REY) {
-		ETSIDI::play("sonidos/error.mp3");
+		if (reproducirSonido) ETSIDI::play("sonidos/error.mp3");
 		return false;
 	}
 
@@ -59,8 +59,10 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 			break;
 		}
 	}
-	if (!valido) return false;
-
+	if (!valido) {
+		if (reproducirSonido) ETSIDI::play("sonidos/error.mp3");
+		return false;
+	}
 	// Enroque
 	if (pieza->getTipo() == tipo::REY && abs(destino.x - origen.x) == 3) {
 		int fila = origen.y;
@@ -88,7 +90,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 		if (origen.x != destino.x) {
 			// Solo permite capturar si hay pieza enemiga
 			if (!destinoPieza || destinoPieza->getColor() == turno) {
-				ETSIDI::play("sonidos/error.mp3");
+				if (reproducirSonido) ETSIDI::play("sonidos/error.mp3");
 				return false;
 			}
 		}
@@ -108,7 +110,7 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	tablero[destino.x][destino.y] = pieza;
 	pieza->mueve(destino);
 
-	bool enJaque = Jaque(turno);
+	bool enJaque = Jaque(turno, reproducirSonido);
 
 	// Revertir simulación
 	pieza->mueve(origenOriginal);
@@ -121,8 +123,8 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	}
 
 	if (enJaque) {
-		ETSIDI::play("sonidos/error.mp3");
-		std::cout << "Movimiento no permitido, El rey sigue en jaque\n";
+		if (reproducirSonido) std::cout << "Movimiento no permitido, El rey sigue en jaque\n";
+		if (reproducirSonido) ETSIDI::play("sonidos/error.mp3");
 		return false;
 	}
 
@@ -131,8 +133,8 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 		// Eliminar del vector de piezas
 		auto it = std::find(piezas.begin(), piezas.end(), destinoPieza);
 		if (it != piezas.end()) piezas.erase(it);
-		ETSIDI::play("sonidos/comer.mp3");
 		delete destinoPieza;
+		if (reproducirSonido) ETSIDI::play("sonidos/comer.mp3");
 	}
 
 	tablero[destino.x][destino.y] = pieza;
@@ -140,23 +142,23 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	pieza->mueve(destino);
 	// Aviso de jaque ó jaque mate
 	char enemigo = (turno == 'B') ? 'N' : 'B';
-	std::cout << "[DEBUG] Turno actual: " << turno << ", comprobando jaque a: " << enemigo << std::endl;
+	if (reproducirSonido) std::cout << "[DEBUG] Turno actual: " << turno << ", comprobando jaque a: " << enemigo << std::endl;
 	// Comprobar si el rey del enemigo está en jaque
 	if (Jaque(enemigo)) {
-		ETSIDI::play("sonidos/jaque.mp3");
-		std::cout << "¡Jaque al Rey " << enemigo << "!\n";
+		if (reproducirSonido) ETSIDI::play("sonidos/jaque.mp3");
+		if (reproducirSonido) std::cout << "¡Jaque al Rey " << enemigo << "!\n";
 		if (JaqueMate(enemigo)) {
 			std::cout << "¡Jaque mate! Gana el jugador " << turno << std::endl;
 			partidaFinalizada = true; // Partida finalizada
 			if (refControl != nullptr) {
 				if (turno == 'B')  // Gana blanco (ROJO)
 				{
-					ETSIDI::play("sonidos/victoria.mp3");
+					if (reproducirSonido) ETSIDI::play("sonidos/victoria.mp3");
 					refControl->Set_Estado(GANAROJO);
 				}
 				else               // Gana negro (AZUL)
 				{
-					ETSIDI::play("sonidos/victoria.mp3");
+					if (reproducirSonido) ETSIDI::play("sonidos/victoria.mp3");
 					refControl->Set_Estado(GANAAZUL);
 				}
 			}
@@ -164,19 +166,20 @@ bool Tablero::moverPieza(Vector2D origen, Vector2D destino) {
 	}
 	
 	// Coronar (solo marcamos que se necesita promoción)
-		if (pieza->getTipo() == tipo::PEON) {
-			int filaFinal = (pieza->getColor() == 'B') ? 7 : 0;
-			if (destino.y == filaFinal) {
-				peonParaPromocion = destino;
-				promocionPendiente = true;
-				return true;  // Se completará en el control
-			}
+	if (pieza->getTipo() == tipo::PEON) {
+		int filaFinal = (pieza->getColor() == 'B') ? 7 : 0;
+		if (destino.y == filaFinal) {
+			if (reproducirSonido) ETSIDI::play("sonidos/peonfinal.mp3");
+			peonParaPromocion = destino;
+			promocionPendiente = true;
+			return true;  // Se completará en el control
 		}
-	
+	}
+
 	cambiarTurno();
+
 	return true;
 }
-
 
 Tablero::~Tablero() {
 	for (auto pieza : piezas) {
@@ -216,6 +219,7 @@ void Tablero::dibuja() {
 			if ((fila + col) % 2 == 0)
 				glColor3f(0.2f, 0.2f, 0.2f); // oscuro
 			else
+				
 				glColor3f(0.9f, 0.9f, 0.9f); // claro
 			float x1 = offsetX + col * casillaSize;
 			float y1 = offsetY + fila * casillaSize;
@@ -294,15 +298,11 @@ if (refControl && refControl->haySeleccion()) {
 
 
 	//dibujar pieza
-	for (int x = 0; x < 10; ++x) {
-		for (int y = 0; y < 8; ++y) {
-			Pieza* p = tablero[x][y];
-			if (p != nullptr) {
-				p->dibuja();  // Dibujar cada pieza
-			}
-		}
-
+for (Pieza* p : piezas) {
+	if (p != nullptr) {
+		p->dibuja();
 	}
+}
 }
 
 
@@ -472,8 +472,7 @@ void Tablero::inicializar(){
 
 }
 
-bool Tablero::Jaque(char color)
-{
+bool Tablero::Jaque(char color, bool mostrarDebug) {
 	Vector2D posicionRey;
 	bool reyEncontrado = false;
 
@@ -482,7 +481,8 @@ bool Tablero::Jaque(char color)
 		if (p->getColor() == color && p->getTipo() == tipo::REY) {
 			posicionRey = p->getPosicion();
 			reyEncontrado = true;
-			std::cout << "[DEBUG] Rey de color " << color << " encontrado en (" << posicionRey.x << "," << posicionRey.y << ")\n";
+			if (mostrarDebug)
+				std::cout << "[DEBUG] Rey de color " << color << " encontrado en (" << posicionRey.x << "," << posicionRey.y << ")\n";
 			break;
 		}
 	}
@@ -492,12 +492,12 @@ bool Tablero::Jaque(char color)
 	// Comprobar si alguna pieza enemiga puede atacarlo
 	for (Pieza* p : piezas) {
 		if (p->getColor() != color) {
-			std::vector<Vector2D> movs = p->movimientosPosibles(tablero,this);
+			std::vector<Vector2D> movs = p->movimientosPosibles(tablero, this);
 			for (const Vector2D& m : movs) {
 				if (m.x == posicionRey.x && m.y == posicionRey.y) {
-					std::cout << "[DEBUG] Jaque detectado al rey en (" << m.x << "," << m.y << ") por pieza enemiga\n";
+					if (mostrarDebug)
+						std::cout << "[DEBUG] Jaque detectado al rey en (" << m.x << "," << m.y << ") por pieza enemiga\n";
 					return true; // Jaque detectado
-
 				}
 			}
 		}
@@ -505,9 +505,6 @@ bool Tablero::Jaque(char color)
 
 	return false; // No hay jaque
 }
-
-
-
 
 std::vector<Vector2D> Tablero::getMovimientosLegales(Vector2D origen) {
 	Pieza* p = getPiezaEn(origen);
@@ -546,49 +543,28 @@ std::vector<Vector2D> Tablero::getMovimientosLegales(Vector2D origen) {
 	return movs;
 }
 
-
-std::vector<Movimiento> Tablero::generarTodosMovimientos(bool soloCapturas) {
-	std::vector<Movimiento> lista;
-
-	for (int x = 0; x < 10; ++x) {
-		for (int y = 0; y < 8; ++y) {
-			Pieza* p = tablero[x][y];
-			if (p && p->getColor() == turno) {
-				Vector2D origen = { x, y };
-				std::vector<Vector2D> posibles = p->movimientosPosibles(tablero,this);
-
-				for (const Vector2D& destino : posibles) {
-					Pieza* piezaDestino = tablero[destino.x][destino.y];
-
-					// Si se piden solo capturas y no hay pieza enemiga, se ignora
-					if (soloCapturas && (!piezaDestino || piezaDestino->getColor() == turno))
-						continue;
-
-					// Simular movimiento
-					Pieza* tmp = tablero[destino.x][destino.y];
-					tablero[x][y] = nullptr;
-					tablero[destino.x][destino.y] = p;
-					Vector2D posOriginal = p->getPosicion();
-					p->mueve(destino);
-
-					bool enJaque = Jaque(turno);
-
-					// Revertir simulación
-					p->mueve(posOriginal);
-					tablero[x][y] = p;
-					tablero[destino.x][destino.y] = tmp;
-
-					if (!enJaque) {
-						lista.emplace_back(origen, destino);
-					}
+std::vector<Movimiento> Tablero::generarTodosMovimientos(char color, bool soloCapturas) {
+	std::vector<Movimiento> movimientos;
+	for (Pieza* pieza : getPiezas()) {
+		if (pieza && pieza->getColor() == color) {
+			std::vector<Vector2D> destinos = getMovimientosLegales(pieza->getPosicion());
+			for (const auto& dest : destinos) {
+				Pieza* objetivo = getPiezaEn(dest);
+				// No permitir capturar tu propio rey
+				if (objetivo && objetivo->getTipo() == tipo::REY && objetivo->getColor() == color)
+					continue;
+				if (soloCapturas) {
+					if (objetivo && objetivo->getColor() != color)
+						movimientos.push_back(Movimiento(pieza->getPosicion(), dest));
+				}
+				else {
+					movimientos.push_back(Movimiento(pieza->getPosicion(), dest));
 				}
 			}
 		}
 	}
-
-	return lista;
+	return movimientos;
 }
-
 bool Tablero::JaqueMate(char color) {
 	if (!Jaque(color)) return false; // Si no está en jaque, no es jaque mate
 
@@ -621,7 +597,6 @@ bool Tablero::JaqueMate(char color) {
 	return true;
 }
 
-
 void Tablero::borrar() {
 	// Eliminar todas las piezas del vector
 	for (Pieza* pieza : piezas) {
@@ -651,8 +626,6 @@ bool Tablero::casillaAmenazada(Pieza* tablero[10][8], Vector2D casilla, char col
 	return false;
 }
 
-
-
 void Tablero::setPiezaEn(Vector2D pos, Pieza* p) {
 	tablero[pos.x][pos.y] = p;
 	if (p) {
@@ -660,18 +633,23 @@ void Tablero::setPiezaEn(Vector2D pos, Pieza* p) {
 	}
 }
 
-
 void Tablero::reemplazarPeonPromocionado(Pieza* nueva) {
-	Pieza* peon = getPiezaEn(peonParaPromocion);
+	int x = peonParaPromocion.x;
+	int y = peonParaPromocion.y;
+
+	Pieza* peon = tablero[x][y];
 	if (peon) {
+	
 		auto it = std::find(piezas.begin(), piezas.end(), peon);
-		if (it != piezas.end()) piezas.erase(it);
-		delete peon;
+		if (it != piezas.end()) {
+			piezas.erase(it);
+		}
+		delete peon;  
 	}
 
-	tablero[peonParaPromocion.x][peonParaPromocion.y] = nueva;
-	piezas.push_back(nueva);
-	promocionPendiente = false;
+	tablero[x][y] = nueva;        
+	piezas.push_back(nueva);      
+	promocionPendiente = false;  
 }
 
 bool Tablero::empate() {
@@ -723,4 +701,29 @@ bool Tablero::ahogado(char color) {
 	}
 	// No hay movimientos legales y no está en jaque: ahogado
 	return true;
+}
+
+Tablero::Tablero(const Tablero& otro) {
+	// Copia atributos básicos
+	this->turno = otro.turno;
+	this->partidaFinalizada = otro.partidaFinalizada;
+	this->promocionPendiente = otro.promocionPendiente;
+	this->peonParaPromocion = otro.peonParaPromocion;
+
+	// Copia profunda de las piezas
+	this->piezas.clear();
+	for (Pieza* p : otro.piezas) {
+		if (p) this->piezas.push_back(p->clonar());
+		else this->piezas.push_back(nullptr);
+	}
+
+	// Copia el array tablero
+	for (int i = 0; i < 10; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			this->tablero[i][j] = nullptr;
+		}
+	}
+	for (Pieza* p : this->piezas) {
+		if (p) this->tablero[p->getPosicion().x][p->getPosicion().y] = p;
+	}
 }

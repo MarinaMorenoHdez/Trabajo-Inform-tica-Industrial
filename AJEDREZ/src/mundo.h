@@ -1,7 +1,7 @@
 #pragma once
 #include "tablero.h"
 
-// DeclaraciÃ³n adelantada para evitar incluir control.h
+// Declaración adelantada para evitar incluir control.h
 class control;
 
 class Mundo {

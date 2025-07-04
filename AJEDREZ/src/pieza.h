@@ -5,6 +5,19 @@ using std::vector;
 
 enum class tipo { ARZOBISPO, CANCILLER, TORRE, CABALLO, REINA, REY, PEON, ALFIL };
 
+inline int valorPieza(tipo t) {
+    switch (t) {
+    case tipo::REY: return 10000;
+    case tipo::REINA: return 900;
+    case tipo::TORRE: return 500;
+    case tipo::ALFIL: return 330;
+    case tipo::CABALLO: return 320;
+    case tipo::CANCILLER: return 700;
+    case tipo::ARZOBISPO: return 700;
+    case tipo::PEON: return 100;
+    default: return 0;
+    }
+}
 class Pieza {
 protected:
     bool movida = false;
@@ -14,6 +27,7 @@ protected:
     tipo t;
 
 public:
+    virtual Pieza* clonar() const = 0;
     Pieza(int x, int y, int c, tipo t) : color(c), posicion(x, y), t(t) {}
     virtual ~Pieza() = 0;
 

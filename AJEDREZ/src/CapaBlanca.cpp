@@ -76,6 +76,7 @@ void OnTimer(int value)
 
 	glutTimerFunc(6000000, OnTimer, 0); //10min
 	glutPostRedisplay();
+}
 
 void OnMouseClick(int b, int state, int x, int y)
 {

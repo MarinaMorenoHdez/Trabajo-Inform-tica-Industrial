@@ -153,37 +153,6 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             estado = MENUPAUSA;
         }
     }
-    /*
-    case PEONFINALAZUL:
-    {
-        Vector2D pos = mundo.getTablero().getPeonParaPromocion();
-        char color = 'B';
-        Pieza* nueva = nullptr;
-        ETSIDI::play("sonidos/pulsartecla.mp3");
-        if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Alfil(pos.x, pos.y, color);
-        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Arzobispo(pos.x, pos.y, color);
-        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Caballo(pos.x, pos.y, color);
-        else if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Canciller(pos.x, pos.y, color);
-        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Reina(pos.x, pos.y, color);
-        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Torre(pos.x, pos.y, color);
-
-        if (nueva) {
-            mundo.getTablero().reemplazarPeonPromocionado(nueva);
-            mundo.getTablero().cancelarPromocion();
-            mundo.getTablero().cambiarTurno();
-            limpiarSeleccion();
-            estado = JUEGO;
-        }
-
-        break;
-    }
-    */
 
     case PEONFINALAZUL:
     {
@@ -210,46 +179,12 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             mundo.getTablero().cancelarPromocion();
             limpiarSeleccion();
             estado = JUEGO;
-			//if (mundo.get_oponente() == 0) {
-				mundo.getTablero().cambiarTurno();
-			//}
+			mundo.getTablero().cambiarTurno();
+
         }
         break;
     }
-    /*
-    case PEONFINALROJO:
-    {
 
-        std::cout << "Click: x = " << x_mundo << ", y = " << y_mundo << std::endl;
-
-        Vector2D pos = mundo.getTablero().getPeonParaPromocion();
-        char color = 'N';
-
-        Pieza* nueva = nullptr;
-        ETSIDI::play("sonidos/pulsartecla.mp3");
-        if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Alfil(pos.x, pos.y, color);
-        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Arzobispo(pos.x, pos.y, color);
-        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= 16 && y_mundo <= 28)
-            nueva = new Caballo(pos.x, pos.y, color);
-        else if (x_mundo >= -11 && x_mundo <= -1.5 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Canciller(pos.x, pos.y, color);
-        else if (x_mundo >= 7.5 && x_mundo <= 21.6 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Reina(pos.x, pos.y, color);
-        else if (x_mundo >= 30 && x_mundo <= 40 && y_mundo >= -1.6 && y_mundo <= 13)
-            nueva = new Torre(pos.x, pos.y, color);
-
-        if (nueva) {
-            mundo.getTablero().reemplazarPeonPromocionado(nueva);
-            mundo.getTablero().cancelarPromocion();
-            mundo.getTablero().cambiarTurno();
-            limpiarSeleccion();
-            estado = JUEGO;
-        }
-        break;
-    }
-    */
     case PEONFINALROJO:
     {
         Vector2D pos = mundo.getTablero().getPeonParaPromocion();
@@ -275,9 +210,7 @@ void control::MouseButton(int tipo_oponente, int x, int y, int boton, bool abajo
             mundo.getTablero().cancelarPromocion();
             limpiarSeleccion();
             estado = JUEGO;
-            //if (mundo.get_oponente() == 0) {
-                mundo.getTablero().cambiarTurno();
-            //}
+            mundo.getTablero().cambiarTurno();
         }
         break;
     }
@@ -445,66 +378,6 @@ control::control() {
     mundo.setControl(this);  
 }
 
-/*
-void control::gestionarMovimientoJugador(Vector2D coord) {
-    if (mundo.getTablero().isPartidaFinalizada()) {
-        std::cout << "¡Jaque Mate! La partida ha terminado.\n";
-        return;
-    }
-
-    Pieza* p = mundo.getTablero().getPiezaEn(coord);
-
-    if (!piezaSeleccionada) {
-        if (p && p->getColor() == mundo.getTablero().getTurno()) {
-            piezaSeleccionada = true;
-            casillaSeleccionada = coord;
-            casillasPosibles = mundo.getTablero().getMovimientosLegales(coord);
-        }
-    }
-    else {
-        if (mundo.getTablero().moverPieza(casillaSeleccionada, coord)) {
-            limpiarSeleccion();
-
-          
-            if (mundo.getTablero().hayPromocionPendiente()) {
-                estado = (mundo.getTurno() == 'N') ? PEONFINALROJO : PEONFINALAZUL;
-                return;
-            }
-            //empate por falta de piezas
-            if (mundo.getTablero().empate()) {
-                std::cout << "¡Empate por falta de piezas!" << std::endl;
-                mundo.getTablero().setPartidaFinalizada(true); // Si tienes este método
-                estado = TABLAS; // Cambia el estado para mostrar el empate
-                ETSIDI::play("sonidos/victoria.mp3");
-            }
-            
-            //empate por rey ahogado
-            char turnoActual = mundo.getTablero().getTurno();
-            char rival = (turnoActual == 'B') ? 'N' : 'B';
-            if (mundo.getTablero().ahogado(turnoActual)) {
-                std::cout << "¡Empate por rey ahogado!" << std::endl;
-                mundo.getTablero().setPartidaFinalizada(true);
-                estado = TABLAS;
-                ETSIDI::play("sonidos/victoria.mp3");
-                return;
-            }
-            // Si juegas contra la IA, actúa ahora
-            if (mundo.get_oponente() == 1) {
-                Movimiento mejor = ia.calcularMejorMovimiento(mundo.getTablero(), mundo.getTablero().getTurno());
-                if (mejor.origen.x != -1) {
-                    mundo.getTablero().moverPieza(mejor.origen, mejor.destino);
-                }
-            }
-        }
-        else {
-            piezaSeleccionada = false;
-            casillasPosibles.clear();
-        }
-    }
-}
-*/
-
-//v1
 
 void control::gestionarMovimientoJugador(Vector2D coord) {
     if (mundo.getTablero().isPartidaFinalizada()) {

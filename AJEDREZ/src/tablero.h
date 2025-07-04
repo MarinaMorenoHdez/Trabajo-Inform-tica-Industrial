@@ -10,7 +10,7 @@
 #include "reina.h"
 #include "rey.h"
 #include "alfil.h"
-#include "movimiento.h"  
+#include "movimiento.h"  // Asegúrate de incluir esto si defines Movimiento en otro archivo
 
 class control;
 
@@ -29,17 +29,15 @@ private:
 public:
 	Tablero();
 	~Tablero();
+	Tablero(const Tablero& otro);
 
-	bool moverPieza(Vector2D origen, Vector2D destino);
+	bool moverPieza(Vector2D origen, Vector2D destino, bool reproducirSonido = true);
 	void cambiarTurno();
 	void inicializar();
 	void dibuja();
-	bool Jaque(char color);
+	bool Jaque(char color, bool mostrarDebug = false);
 	bool JaqueMate(char color);
 	void borrar();
-	bool empate();
-	bool ahogado(char color);
-	void setPartidaFinalizada(bool fin) { partidaFinalizada = fin; }
 
 	bool casillaAmenazada(Pieza* tablero[10][8], Vector2D casilla, char color);
 
@@ -49,7 +47,7 @@ public:
 	void setControl(control* c) { refControl = c; }
 
 	bool isPartidaFinalizada() const { return partidaFinalizada; }
-	std::vector<Movimiento> generarTodosMovimientos(bool soloCapturas = false);  
+	std::vector<Movimiento> generarTodosMovimientos(char color,bool soloCapturas = false); //
 	std::vector<Vector2D> getMovimientosLegales(Vector2D origen);  
 	void setPiezaEn(Vector2D pos, Pieza* p);
 	bool hayPromocionPendiente() const { return promocionPendiente; }
@@ -57,5 +55,10 @@ public:
 	void cancelarPromocion() { promocionPendiente = false; }
 	void reemplazarPeonPromocionado(Pieza* nueva);
 
+	bool empate();
+	bool ahogado(char color); 
+	void setPartidaFinalizada(bool fin) { partidaFinalizada = fin; }
 
+	//v1
+	const std::vector<Pieza*>& getPiezas() const { return piezas; }
 };

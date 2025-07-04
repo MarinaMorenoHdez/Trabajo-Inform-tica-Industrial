@@ -6,4 +6,6 @@ struct Movimiento {
     Vector2D destino;
 
     Movimiento(Vector2D o, Vector2D d) : origen(o), destino(d) {}
+ 
+
 };
