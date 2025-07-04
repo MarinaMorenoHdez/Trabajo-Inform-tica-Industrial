@@ -14,6 +14,9 @@ Este proyecto recrea un juego de ajedrez clásico con las siguientes particulari
 - Interacción mediante clics y selección de casillas.
 
 ---
+## Vídeo explicativo
+
+[![Alt text](https://img.youtube.com/vi/EjtSjZiJGtY/0.jpg)](https://www.youtube.com/watch?v=EjtSjZiJGtY)
 
 ## Capturas
 
